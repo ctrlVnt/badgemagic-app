@@ -1,5 +1,6 @@
 import 'package:badgemagic/bademagic_module/models/mode.dart';
 import 'package:badgemagic/bademagic_module/models/speed.dart';
+import 'package:flutter/src/painting/text_style.dart';
 
 class Message {
   final List<String> text;
@@ -15,7 +16,8 @@ class Message {
     this.marquee = false,
     this.speed = Speed.one,
     this.mode = Mode.left,
-    this.animationIndex, // 👈 NEW
+    this.animationIndex,
+    TextStyle? fontStyle, // 👈 NEW
   });
 
   // Convert Message object to JSON

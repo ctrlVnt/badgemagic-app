@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'dart:math';
-import 'dart:ui';
 import 'package:badgemagic/bademagic_module/bluetooth/base_ble_state.dart';
 import 'package:badgemagic/bademagic_module/bluetooth/datagenerator.dart';
 import 'package:badgemagic/bademagic_module/utils/converters.dart';
@@ -13,6 +12,7 @@ import 'package:badgemagic/bademagic_module/models/mode.dart';
 import 'package:badgemagic/bademagic_module/models/speed.dart';
 import 'package:badgemagic/badge_animation/ani_fish.dart';
 import 'package:badgemagic/providers/imageprovider.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:get_it/get_it.dart';
 import 'package:logger/logger.dart';
@@ -61,8 +61,10 @@ class BadgeMessageProvider {
   Converters converters = Converters();
 
   Future<Data> getBadgeData(String text, bool flash, bool marq, Speed speed,
-      Mode mode, bool isInverted) async {
-    List<String> message = await converters.messageTohex(text, isInverted);
+      Mode mode, bool isInverted,
+      {TextStyle? textStyle}) async {
+    List<String> message =
+        await converters.textToBadgeHex(text, isInverted, fontStyle: textStyle);
     Data data = Data(messages: [
       Message(
         text: message,
@@ -75,19 +77,15 @@ class BadgeMessageProvider {
     return data;
   }
 
-  Future<Data> generateData(
-      String? text,
-      bool? flash,
-      bool? marq,
-      bool? inverted,
-      Speed? speed,
-      Mode? mode,
-      Map<String, dynamic>? jsonData) async {
+  Future<Data> generateData(String? text, bool? flash, bool? marq,
+      bool? inverted, Speed? speed, Mode? mode, Map<String, dynamic>? jsonData,
+      {TextStyle? textStyle}) async {
     if (jsonData != null) {
       return fileHelper.jsonToData(jsonData);
     } else {
       return getBadgeData(text ?? '', flash ?? false, marq ?? false,
-          speed ?? Speed.one, mode ?? Mode.left, inverted ?? false);
+          speed ?? Speed.one, mode ?? Mode.left, inverted ?? false,
+          textStyle: textStyle);
     }
   }
 

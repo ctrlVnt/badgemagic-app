@@ -1,6 +1,8 @@
 import 'package:badgemagic/constants.dart';
+import 'package:badgemagic/services/localization_service.dart';
 import 'package:badgemagic/view/widgets/animation_container.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 
 // Transition tab to show basic animations
 class TransitionTab extends StatefulWidget {
@@ -21,6 +23,7 @@ class _TransitionTabState extends State<TransitionTab> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = GetIt.instance.get<LocalizationService>().l10n;
     return SingleChildScrollView(
       child: Column(
         children: [
@@ -28,17 +31,17 @@ class _TransitionTabState extends State<TransitionTab> {
             children: [
               AniContainer(
                 animation: aniLeft,
-                animationName: 'Left',
+                animationName: l10n.animationLeft,
                 index: 0,
               ),
               AniContainer(
                 animation: aniRight,
-                animationName: 'Right',
+                animationName: l10n.animationRight,
                 index: 1,
               ),
               AniContainer(
                 animation: aniUp,
-                animationName: 'Up',
+                animationName: l10n.animationUp,
                 index: 2,
               ),
             ],
@@ -47,17 +50,17 @@ class _TransitionTabState extends State<TransitionTab> {
             children: [
               AniContainer(
                 animation: aniDown,
-                animationName: 'Down',
+                animationName: l10n.animationDown,
                 index: 3,
               ),
               AniContainer(
                 animation: aniFixed,
-                animationName: 'Fixed',
+                animationName: l10n.animationFixed,
                 index: 4,
               ),
               AniContainer(
                 animation: animation,
-                animationName: 'Animation',
+                animationName: l10n.animation,
                 index: 5,
               ),
             ],
@@ -66,17 +69,17 @@ class _TransitionTabState extends State<TransitionTab> {
             children: [
               AniContainer(
                 animation: aniSnowflake,
-                animationName: 'Snowflake',
+                animationName: l10n.animationSnowflake,
                 index: 6,
               ),
               AniContainer(
                 animation: aniPicture,
-                animationName: 'Picture',
+                animationName: l10n.animationPicture,
                 index: 7,
               ),
               AniContainer(
                 animation: aniLaser,
-                animationName: 'Laser',
+                animationName: l10n.animationLaser,
                 index: 8,
               ),
             ],

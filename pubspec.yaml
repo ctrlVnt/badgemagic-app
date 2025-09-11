@@ -32,6 +32,9 @@ dependencies:
   flutter:
     sdk: flutter
   shared_preferences: 2.5.3
+  flutter_localizations:
+    sdk: flutter
+  intl: 0.20.2
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -78,8 +81,11 @@ flutter:
   # the material Icons class.
   uses-material-design: true
 
-  # To add assets to your application, add an assets section, like this:
+  # Localization configuration
+  generate: true
+  # Add this to tell Flutter where your ARB files are
   assets:
+    - lib/l10n/
     - assets/icons/
     - assets/animations/
     - assets/effects/

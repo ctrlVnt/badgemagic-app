@@ -1,11 +1,15 @@
 import 'package:badgemagic/bademagic_module/bluetooth/datagenerator.dart';
 import 'package:badgemagic/bademagic_module/bluetooth/write_state.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
+import 'package:get_it/get_it.dart';
+import '../../view/widgets/ble_progress_dialog.dart';
+import '../../view/widgets/ble_progress_dialog_controller.dart';
 import 'base_ble_state.dart';
 
 class ConnectState extends RetryBleState {
   final ScanResult scanResult;
   final DataTransferManager manager;
+  final bleDialogController = GetIt.instance<BleDialogController>();
 
   ConnectState({required this.manager, required this.scanResult});
 
@@ -26,7 +30,7 @@ class ConnectState extends RetryBleState {
 
       if (connectionState == BluetoothConnectionState.connected) {
         logger.d("Device connected successfully");
-        toast.showToast('Device connected successfully.');
+        bleDialogController.update(BleDialogStatus.connecting, 'Device connected successfully.');
 
         manager.connectedDevice = scanResult.device;
 
@@ -40,7 +44,7 @@ class ConnectState extends RetryBleState {
         throw Exception("Failed to connect to the device");
       }
     } catch (e) {
-      toast.showErrorToast('Failed to connect. Retrying...');
+      bleDialogController.update(BleDialogStatus.error, 'Failed to connect. Retrying...');
       rethrow;
     }
   }

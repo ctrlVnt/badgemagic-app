@@ -8,7 +8,6 @@ abstract class BleState {
 
 abstract class NormalBleState extends BleState {
   final logger = Logger();
-  final toast = ToastUtils();
 
   Future<BleState?> processState();
 
@@ -25,7 +24,6 @@ abstract class NormalBleState extends BleState {
 
 abstract class RetryBleState extends BleState {
   final logger = Logger();
-  final toast = ToastUtils();
 
   final _maxRetries = 3;
 

@@ -1,11 +1,15 @@
 import 'package:badgemagic/bademagic_module/bluetooth/datagenerator.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
+import 'package:get_it/get_it.dart';
+import '../../view/widgets/ble_progress_dialog.dart';
+import '../../view/widgets/ble_progress_dialog_controller.dart';
 import 'base_ble_state.dart';
 import 'completed_state.dart';
 
 class WriteState extends NormalBleState {
   final BluetoothDevice device;
   final DataTransferManager manager;
+  final bleDialogController = GetIt.instance<BleDialogController>();
 
   WriteState({required this.manager, required this.device});
 
@@ -13,6 +17,9 @@ class WriteState extends NormalBleState {
   Future<BleState?> processState() async {
     List<List<int>> dataChunks = await manager.generateDataChunk();
     logger.d("Data to write: $dataChunks");
+
+    int totalChunks = dataChunks.length;
+    int currentChunkIndex = 0;
 
     try {
       List<BluetoothService> services = await device.discoverServices();
@@ -23,6 +30,16 @@ class WriteState extends NormalBleState {
                   Guid("0000fee1-0000-1000-8000-00805f9b34fb") &&
               characteristic.properties.write) {
             for (List<int> chunk in dataChunks) {
+              currentChunkIndex++;
+
+              double currentProgress = currentChunkIndex / totalChunks;
+
+              bleDialogController.update(
+                BleDialogStatus.transferring,
+                "Sending data...\n$currentChunkIndex / $totalChunks",
+                newProgress: currentProgress,
+              );
+
               bool success = false;
               for (int attempt = 1; attempt <= 3; attempt++) {
                 try {

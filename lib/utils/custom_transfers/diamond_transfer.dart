@@ -8,14 +8,19 @@ import 'package:badgemagic/bademagic_module/utils/toast_utils.dart';
 import 'package:badgemagic/badge_animation/ani_diamond.dart';
 import 'package:badgemagic/utils/custom_transfers/common.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
+import 'package:get_it/get_it.dart';
 import 'package:logger/logger.dart';
+
+import '../../view/widgets/ble_progress_dialog.dart';
+import '../../view/widgets/ble_progress_dialog_controller.dart';
 
 Future<void> customTransferDiamondAnimation(
     Future<void> Function(DataTransferManager) transferData,
     int speedLevel) async {
+  final bleDialogController = GetIt.instance<BleDialogController>();
   final adapterState = await FlutterBluePlus.adapterState.first;
   if (adapterState != BluetoothAdapterState.on) {
-    ToastUtils().showErrorToast('Please turn on Bluetooth');
+    bleDialogController.update(BleDialogStatus.error, 'Please turn on Bluetooth');
     return;
   }
   const int frameCount = 8;

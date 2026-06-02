@@ -3,12 +3,16 @@ import 'package:badgemagic/bademagic_module/bluetooth/connect_state.dart';
 import 'package:badgemagic/bademagic_module/bluetooth/datagenerator.dart';
 import 'package:badgemagic/providers/BadgeScanProvider.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
+import 'package:get_it/get_it.dart';
+import '../../view/widgets/ble_progress_dialog.dart';
+import '../../view/widgets/ble_progress_dialog_controller.dart';
 import 'base_ble_state.dart';
 
 class ScanState extends NormalBleState {
   final DataTransferManager manager;
   final BadgeScanMode mode;
   final List<String> allowedNames;
+  final bleDialogController = GetIt.instance<BleDialogController>();
 
   ScanState({
     required this.manager,
@@ -21,7 +25,6 @@ class ScanState extends NormalBleState {
     manager.clearConnectedDevice();
     await FlutterBluePlus.stopScan();
 
-    toast.showToast("Searching for device...");
     Completer<BleState?> nextStateCompleter = Completer();
     StreamSubscription<List<ScanResult>>? subscription;
 
@@ -53,7 +56,7 @@ class ScanState extends NormalBleState {
 
             isCompleted = true;
             FlutterBluePlus.stopScan();
-            toast.showToast('Device found. Connecting...');
+            bleDialogController.update(BleDialogStatus.connecting, 'Device found. Connecting...');
 
             nextStateCompleter.complete(ConnectState(
               scanResult: foundDevice,
@@ -68,7 +71,7 @@ class ScanState extends NormalBleState {
             isCompleted = true;
             FlutterBluePlus.stopScan();
             logger.e("Scan error: $e");
-            toast.showErrorToast('Scan error occurred.');
+            bleDialogController.update(BleDialogStatus.error, 'Scan error occurred.');
             nextStateCompleter.completeError(
               Exception("Error during scanning: $e"),
             );
@@ -87,7 +90,7 @@ class ScanState extends NormalBleState {
       if (!isCompleted) {
         isCompleted = true;
         FlutterBluePlus.stopScan();
-        toast.showErrorToast('Device not found.');
+        bleDialogController.update(BleDialogStatus.error, 'Device not found.');
         nextStateCompleter.completeError(Exception('Device not found.'));
       }
 

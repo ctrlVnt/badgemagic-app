@@ -3,7 +3,6 @@ import 'package:badgemagic/bademagic_module/bluetooth/base_ble_state.dart';
 import 'package:badgemagic/bademagic_module/bluetooth/datagenerator.dart';
 import 'package:badgemagic/bademagic_module/utils/converters.dart';
 import 'package:badgemagic/bademagic_module/utils/file_helper.dart';
-import 'package:badgemagic/bademagic_module/utils/toast_utils.dart';
 import 'package:badgemagic/bademagic_module/bluetooth/scan_state.dart';
 import 'package:badgemagic/bademagic_module/models/data.dart';
 import 'package:badgemagic/bademagic_module/models/messages.dart';
@@ -17,7 +16,10 @@ import 'package:badgemagic/utils/custom_transfers/transfers.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:get_it/get_it.dart';
 import 'package:logger/logger.dart';
-import 'package:provider/provider.dart'; // Import the new EqualizerAnimation
+import 'package:provider/provider.dart';
+
+import '../view/widgets/ble_progress_dialog.dart';
+import '../view/widgets/ble_progress_dialog_controller.dart'; // Import the new EqualizerAnimation
 
 Map<int, Mode> modeValueMap = {
   0: Mode.left,
@@ -124,7 +126,8 @@ class BadgeMessageProvider {
       {TextStyle? textStyle}) async {
     if (await FlutterBluePlus.isSupported == false) {
       final l10n = GetIt.instance.get<LocalizationService>().l10n;
-      ToastUtils().showErrorToast(l10n.error);
+      final bleDialogController = GetIt.instance<BleDialogController>();
+      bleDialogController.update(BleDialogStatus.error, l10n.error);
       return;
     }
 
@@ -147,7 +150,8 @@ class BadgeMessageProvider {
       } catch (_) {}
       if (mode != Mode.pacman && !isFireworks) {
         final l10n = GetIt.instance.get<LocalizationService>().l10n;
-        ToastUtils().showErrorToast(l10n.pleaseEnterMessage);
+        final bleDialogController = GetIt.instance<BleDialogController>();
+        bleDialogController.update(BleDialogStatus.error, l10n.pleaseEnterMessage);
         return;
       }
     }
@@ -157,11 +161,12 @@ class BadgeMessageProvider {
     if (adapterState != BluetoothAdapterState.on) {
       if (Platform.isAndroid) {
         final l10n = GetIt.instance.get<LocalizationService>().l10n;
-        ToastUtils().showToast(l10n.loading);
+        final bleDialogController = GetIt.instance<BleDialogController>();
+        bleDialogController.update(BleDialogStatus.connecting, l10n.loading);
         try {
           await FlutterBluePlus.turnOn();
         } catch (e) {
-          ToastUtils().showErrorToast('Failed to enable Bluetooth: $e');
+          bleDialogController.update(BleDialogStatus.error, 'Failed to enable Bluetooth: $e');
           logger.e('Bluetooth turnOn() failed: $e');
           return;
         }
@@ -173,7 +178,7 @@ class BadgeMessageProvider {
               .timeout(
             const Duration(seconds: 10),
             onTimeout: () {
-              ToastUtils().showErrorToast('Bluetooth did not turn on in time.');
+              bleDialogController.update(BleDialogStatus.error, 'Bluetooth did not turn on in time.');
               throw Exception('Bluetooth enable timeout');
             },
           );
@@ -183,7 +188,8 @@ class BadgeMessageProvider {
         }
       } else if (Platform.isIOS) {
         final l10n = GetIt.instance.get<LocalizationService>().l10n;
-        ToastUtils().showErrorToast(l10n.error);
+        final bleDialogController = GetIt.instance<BleDialogController>();
+        bleDialogController.update(BleDialogStatus.error, l10n.error);
 
         try {
           adapterState = await FlutterBluePlus.adapterState
@@ -192,7 +198,7 @@ class BadgeMessageProvider {
               .timeout(
             const Duration(seconds: 10),
             onTimeout: () {
-              ToastUtils().showErrorToast('Bluetooth did not turn on in time.');
+              bleDialogController.update(BleDialogStatus.error, 'Bluetooth did not turn on in time.');
               throw Exception('Bluetooth enable timeout');
             },
           );
@@ -202,7 +208,8 @@ class BadgeMessageProvider {
         }
       } else {
         final l10n = GetIt.instance.get<LocalizationService>().l10n;
-        ToastUtils().showErrorToast(l10n.error);
+        final bleDialogController = GetIt.instance<BleDialogController>();
+        bleDialogController.update(BleDialogStatus.error, l10n.error);
         return;
       }
     }

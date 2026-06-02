@@ -659,7 +659,8 @@ class _HomeScreenState extends State<HomeScreen>
                             ],
                             Expanded(
                               child: GestureDetector(
-                                onTap: () => _showBleTransferDialog(context, inlineImageProvider),
+                                onTap: () => _showBleTransferDialog(
+                                    context, inlineImageProvider),
                                 child: Container(
                                   height: 32.h,
                                   alignment: Alignment.center,
@@ -687,7 +688,8 @@ class _HomeScreenState extends State<HomeScreen>
     );
   }
 
-  void _showBleTransferDialog(BuildContext context, InlineImageProvider inlineImageProvider) {
+  void _showBleTransferDialog(
+      BuildContext context, InlineImageProvider inlineImageProvider) {
     final bleDialogController = BleDialogController();
 
     if (GetIt.instance.isRegistered<BleDialogController>()) {
@@ -722,7 +724,8 @@ class _HomeScreenState extends State<HomeScreen>
       },
     );
 
-    animationProvider.handleAnimationTransfer(
+    animationProvider
+        .handleAnimationTransfer(
       badgeData: badgeData,
       inlineImageProvider: inlineImageProvider,
       speedDialProvider: speedDialProvider,
@@ -730,7 +733,8 @@ class _HomeScreenState extends State<HomeScreen>
       marquee: animationProvider.isEffectActive(MarqueeEffect()),
       invert: animationProvider.isEffectActive(InvertLEDEffect()),
       context: context,
-    ).catchError((error) {
+    )
+        .catchError((error) {
       bleDialogController.update(
         BleDialogStatus.error,
         "An unexpected error\noccurred.",

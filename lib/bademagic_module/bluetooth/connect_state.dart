@@ -30,7 +30,8 @@ class ConnectState extends RetryBleState {
 
       if (connectionState == BluetoothConnectionState.connected) {
         logger.d("Device connected successfully");
-        bleDialogController.update(BleDialogStatus.connecting, 'Device connected successfully.');
+        bleDialogController.update(
+            BleDialogStatus.connecting, 'Device connected successfully.');
 
         manager.connectedDevice = scanResult.device;
 
@@ -44,7 +45,8 @@ class ConnectState extends RetryBleState {
         throw Exception("Failed to connect to the device");
       }
     } catch (e) {
-      bleDialogController.update(BleDialogStatus.error, 'Failed to connect. Retrying...');
+      bleDialogController.update(
+          BleDialogStatus.error, 'Failed to connect. Retrying...');
       rethrow;
     }
   }

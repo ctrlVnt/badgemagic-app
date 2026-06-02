@@ -17,7 +17,8 @@ class BleProgressDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool isFinished = status == BleDialogStatus.success || status == BleDialogStatus.error;
+    final bool isFinished =
+        status == BleDialogStatus.success || status == BleDialogStatus.error;
 
     return AlertDialog(
       backgroundColor: Colors.white,
@@ -60,17 +61,20 @@ class BleProgressDialog extends StatelessWidget {
       actionsAlignment: MainAxisAlignment.center,
       actions: isFinished
           ? [
-        TextButton(
-          style: TextButton.styleFrom(
-            foregroundColor: status == BleDialogStatus.success ? Colors.blue : Colors.red,
-            textStyle: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.bold),
-          ),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-          child: const Text('OK'),
-        ),
-      ]
+              TextButton(
+                style: TextButton.styleFrom(
+                  foregroundColor: status == BleDialogStatus.success
+                      ? Colors.blue
+                      : Colors.red,
+                  textStyle:
+                      TextStyle(fontSize: 14.sp, fontWeight: FontWeight.bold),
+                ),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text('OK'),
+              ),
+            ]
           : null,
     );
   }
@@ -82,13 +86,17 @@ class BleProgressDialog extends StatelessWidget {
           child: Icon(Icons.bluetooth_searching, size: 44, color: Colors.red),
         );
       case BleDialogStatus.connecting:
-        return const Icon(Icons.bluetooth_connected, size: 44, color: Colors.amber);
+        return const Icon(Icons.bluetooth_connected,
+            size: 44, color: Colors.amber);
       case BleDialogStatus.transferring:
-        return const Icon(Icons.swap_vertical_circle_outlined, size: 44, color: Colors.blue);
+        return const Icon(Icons.swap_vertical_circle_outlined,
+            size: 44, color: Colors.blue);
       case BleDialogStatus.success:
-        return const Icon(Icons.check_circle_rounded, size: 44, color: Colors.green);
+        return const Icon(Icons.check_circle_rounded,
+            size: 44, color: Colors.green);
       case BleDialogStatus.error:
-        return const Icon(Icons.error_outline_rounded, size: 44, color: Colors.red);
+        return const Icon(Icons.error_outline_rounded,
+            size: 44, color: Colors.red);
     }
   }
 }
@@ -101,15 +109,19 @@ class _TweakedPulseAnimation extends StatefulWidget {
   State<_TweakedPulseAnimation> createState() => _TweakedPulseAnimationState();
 }
 
-class _TweakedPulseAnimationState extends State<_TweakedPulseAnimation> with SingleTickerProviderStateMixin {
+class _TweakedPulseAnimationState extends State<_TweakedPulseAnimation>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
 
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(vsync: this, duration: const Duration(milliseconds: 1000))..repeat(reverse: true);
-    _animation = Tween<double>(begin: 0.7, end: 1.2).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
+    _controller = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 1000))
+      ..repeat(reverse: true);
+    _animation = Tween<double>(begin: 0.7, end: 1.2)
+        .animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
   }
 
   @override

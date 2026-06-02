@@ -151,7 +151,8 @@ class BadgeMessageProvider {
       if (mode != Mode.pacman && !isFireworks) {
         final l10n = GetIt.instance.get<LocalizationService>().l10n;
         final bleDialogController = GetIt.instance<BleDialogController>();
-        bleDialogController.update(BleDialogStatus.error, l10n.pleaseEnterMessage);
+        bleDialogController.update(
+            BleDialogStatus.error, l10n.pleaseEnterMessage);
         return;
       }
     }
@@ -166,7 +167,8 @@ class BadgeMessageProvider {
         try {
           await FlutterBluePlus.turnOn();
         } catch (e) {
-          bleDialogController.update(BleDialogStatus.error, 'Failed to enable Bluetooth: $e');
+          bleDialogController.update(
+              BleDialogStatus.error, 'Failed to enable Bluetooth: $e');
           logger.e('Bluetooth turnOn() failed: $e');
           return;
         }
@@ -178,7 +180,8 @@ class BadgeMessageProvider {
               .timeout(
             const Duration(seconds: 10),
             onTimeout: () {
-              bleDialogController.update(BleDialogStatus.error, 'Bluetooth did not turn on in time.');
+              bleDialogController.update(
+                  BleDialogStatus.error, 'Bluetooth did not turn on in time.');
               throw Exception('Bluetooth enable timeout');
             },
           );
@@ -198,7 +201,8 @@ class BadgeMessageProvider {
               .timeout(
             const Duration(seconds: 10),
             onTimeout: () {
-              bleDialogController.update(BleDialogStatus.error, 'Bluetooth did not turn on in time.');
+              bleDialogController.update(
+                  BleDialogStatus.error, 'Bluetooth did not turn on in time.');
               throw Exception('Bluetooth enable timeout');
             },
           );

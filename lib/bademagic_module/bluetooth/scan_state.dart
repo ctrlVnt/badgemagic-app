@@ -56,7 +56,8 @@ class ScanState extends NormalBleState {
 
             isCompleted = true;
             FlutterBluePlus.stopScan();
-            bleDialogController.update(BleDialogStatus.connecting, 'Device found. Connecting...');
+            bleDialogController.update(
+                BleDialogStatus.connecting, 'Device found. Connecting...');
 
             nextStateCompleter.complete(ConnectState(
               scanResult: foundDevice,
@@ -71,7 +72,8 @@ class ScanState extends NormalBleState {
             isCompleted = true;
             FlutterBluePlus.stopScan();
             logger.e("Scan error: $e");
-            bleDialogController.update(BleDialogStatus.error, 'Scan error occurred.');
+            bleDialogController.update(
+                BleDialogStatus.error, 'Scan error occurred.');
             nextStateCompleter.completeError(
               Exception("Error during scanning: $e"),
             );

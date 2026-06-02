@@ -20,7 +20,8 @@ Future<void> customTransferFireworksAnimation(
   final bleDialogController = GetIt.instance<BleDialogController>();
   final adapterState = await FlutterBluePlus.adapterState.first;
   if (adapterState != BluetoothAdapterState.on) {
-    bleDialogController.update(BleDialogStatus.error, 'Please turn on Bluetooth');
+    bleDialogController.update(
+        BleDialogStatus.error, 'Please turn on Bluetooth');
     return;
   }
 

@@ -1,5 +1,4 @@
 import 'package:badgemagic/bademagic_module/bluetooth/completed_state.dart';
-import 'package:badgemagic/bademagic_module/utils/toast_utils.dart';
 import 'package:logger/logger.dart';
 
 abstract class BleState {

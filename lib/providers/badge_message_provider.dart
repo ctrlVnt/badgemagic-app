@@ -19,7 +19,7 @@ import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
 import '../view/widgets/ble_progress_dialog.dart';
-import '../view/widgets/ble_progress_dialog_controller.dart'; // Import the new EqualizerAnimation
+import '../view/widgets/ble_progress_dialog_controller.dart';
 
 Map<int, Mode> modeValueMap = {
   0: Mode.left,

@@ -4,7 +4,6 @@ import 'package:badgemagic/bademagic_module/models/messages.dart';
 import 'package:badgemagic/bademagic_module/models/mode.dart';
 import 'package:badgemagic/bademagic_module/models/speed.dart';
 import 'package:badgemagic/bademagic_module/utils/converters.dart';
-import 'package:badgemagic/bademagic_module/utils/toast_utils.dart';
 import 'package:badgemagic/badge_animation/ani_equalizer.dart';
 import 'package:badgemagic/utils/custom_transfers/common.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';

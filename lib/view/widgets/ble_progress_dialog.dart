@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../constants.dart';
+
 enum BleDialogStatus { searching, connecting, transferring, success, error }
 
 class BleProgressDialog extends StatelessWidget {
@@ -50,7 +52,7 @@ class BleProgressDialog extends StatelessWidget {
                 child: LinearProgressIndicator(
                   value: progress,
                   backgroundColor: Colors.grey.shade200,
-                  color: Colors.blue,
+                  color: indicatorColor,
                   minHeight: 6.h,
                 ),
               ),
@@ -63,9 +65,7 @@ class BleProgressDialog extends StatelessWidget {
           ? [
               TextButton(
                 style: TextButton.styleFrom(
-                  foregroundColor: status == BleDialogStatus.success
-                      ? Colors.blue
-                      : Colors.red,
+                  foregroundColor: Colors.black,
                   textStyle:
                       TextStyle(fontSize: 14.sp, fontWeight: FontWeight.bold),
                 ),
@@ -83,17 +83,17 @@ class BleProgressDialog extends StatelessWidget {
     switch (status) {
       case BleDialogStatus.searching:
         return const _TweakedPulseAnimation(
-          child: Icon(Icons.bluetooth_searching, size: 44, color: Colors.red),
+          child: Icon(Icons.bluetooth_searching, size: 44, color: colorPrimary),
         );
       case BleDialogStatus.connecting:
         return const Icon(Icons.bluetooth_connected,
-            size: 44, color: Colors.amber);
+            size: 44, color: colorPrimary);
       case BleDialogStatus.transferring:
         return const Icon(Icons.swap_vertical_circle_outlined,
-            size: 44, color: Colors.blue);
+            size: 44, color: colorPrimary);
       case BleDialogStatus.success:
-        return const Icon(Icons.check_circle_rounded,
-            size: 44, color: Colors.green);
+        return const Icon(Icons.check_circle_outline,
+            size: 44, color: colorPrimary);
       case BleDialogStatus.error:
         return const Icon(Icons.error_outline_rounded,
             size: 44, color: Colors.red);

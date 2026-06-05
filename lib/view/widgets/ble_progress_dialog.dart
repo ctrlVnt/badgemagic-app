@@ -72,7 +72,7 @@ class BleProgressDialog extends StatelessWidget {
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
-                child: const Text('OK'),
+                child: Text(MaterialLocalizations.of(context).okButtonLabel),
               ),
             ]
           : null,

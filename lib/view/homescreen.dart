@@ -690,12 +690,8 @@ class _HomeScreenState extends State<HomeScreen>
 
   void _showBleTransferDialog(
       BuildContext context, InlineImageProvider inlineImageProvider) {
-    final bleDialogController = BleDialogController();
-
-    if (GetIt.instance.isRegistered<BleDialogController>()) {
-      GetIt.instance.unregister<BleDialogController>();
-    }
-    GetIt.instance.registerSingleton<BleDialogController>(bleDialogController);
+    final bleDialogController = GetIt.instance<BleDialogController>();
+    bleDialogController.update(BleDialogStatus.searching, 'Searching...');
 
     showDialog(
       context: context,

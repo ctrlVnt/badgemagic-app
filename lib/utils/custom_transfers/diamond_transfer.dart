@@ -8,8 +8,6 @@ import 'package:badgemagic/badge_animation/ani_diamond.dart';
 import 'package:badgemagic/utils/custom_transfers/common.dart';
 import 'package:logger/logger.dart';
 
-import '../../view/widgets/ble_progress_dialog.dart';
-import '../../view/widgets/ble_progress_dialog_controller.dart';
 
 Future<void> customTransferDiamondAnimation(
     Future<void> Function(DataTransferManager) transferData,

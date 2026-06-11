@@ -55,7 +55,7 @@ class ScanState extends NormalBleState {
               timeoutTimer?.cancel();
               await UniversalBle.stopScan();
               bleDialogController.update(
-                BleDialogStatus.connecting, 'Device found. Connecting...');
+                  BleDialogStatus.connecting, 'Device found. Connecting...');
 
               nextStateCompleter.complete(ConnectState(
                 scanResult: device,
@@ -91,7 +91,8 @@ class ScanState extends NormalBleState {
         if (!isCompleted) {
           isCompleted = true;
           await UniversalBle.stopScan();
-          bleDialogController.update(BleDialogStatus.error, 'Device not found.');
+          bleDialogController.update(
+              BleDialogStatus.error, 'Device not found.');
           nextStateCompleter.completeError(Exception('Device not found.'));
         }
       });

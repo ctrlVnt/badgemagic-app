@@ -17,8 +17,8 @@ import 'package:get_it/get_it.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
-import '../view/widgets/ble_progress_dialog.dart';
-import '../view/widgets/ble_progress_dialog_controller.dart';
+import '../../view/widgets/ble_progress_dialog.dart';
+import '../../view/widgets/ble_progress_dialog_controller.dart';
 
 Map<int, Mode> modeValueMap = {
   0: Mode.left,
@@ -123,6 +123,9 @@ class BadgeMessageProvider {
       bool isSavedBadge,
       BuildContext context,
       {TextStyle? textStyle}) async {
+    final l10n = GetIt.instance.get<LocalizationService>().l10n;
+    final bleDialogController = GetIt.instance<BleDialogController>();
+
     if (controllerData.getController().text.isEmpty && isSavedBadge == false) {
       bool isFireworks = false;
       try {
@@ -138,8 +141,6 @@ class BadgeMessageProvider {
             modeValueMap[cycleIndex] == Mode.cycle) {}
       } catch (_) {}
       if (mode != Mode.pacman && !isFireworks) {
-        final l10n = GetIt.instance.get<LocalizationService>().l10n;
-        final bleDialogController = GetIt.instance<BleDialogController>();
         bleDialogController.update(
             BleDialogStatus.error, l10n.pleaseEnterMessage);
         return;
@@ -151,7 +152,7 @@ class BadgeMessageProvider {
 
     if (adapterState != AvailabilityState.poweredOn) {
       bleDialogController.update(
-                  BleDialogStatus.error, 'Please turn on Bluetooth');
+          BleDialogStatus.error, 'Please turn on Bluetooth');
       logger.w('Bluetooth is currently disabled/unavailable: $adapterState');
       return;
     }

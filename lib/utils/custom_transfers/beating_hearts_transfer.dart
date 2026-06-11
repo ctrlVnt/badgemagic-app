@@ -6,11 +6,8 @@ import 'package:badgemagic/bademagic_module/models/speed.dart';
 import 'package:badgemagic/bademagic_module/utils/converters.dart';
 import 'package:badgemagic/badge_animation/ani_beating_hearts.dart';
 import 'package:badgemagic/utils/custom_transfers/common.dart';
-import 'package:get_it/get_it.dart';
 import 'package:logger/logger.dart';
 
-import '../../view/widgets/ble_progress_dialog.dart';
-import '../../view/widgets/ble_progress_dialog_controller.dart';
 
 Future<void> customTransferBeatingHeartsAnimation(
     Future<void> Function(DataTransferManager) transferData,

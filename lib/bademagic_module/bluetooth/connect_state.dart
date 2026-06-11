@@ -1,13 +1,13 @@
 import 'package:badgemagic/bademagic_module/bluetooth/datagenerator.dart';
 import 'package:badgemagic/bademagic_module/bluetooth/write_state.dart';
-import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:get_it/get_it.dart';
 import '../../view/widgets/ble_progress_dialog.dart';
 import '../../view/widgets/ble_progress_dialog_controller.dart';
+import 'package:universal_ble/universal_ble.dart';
 import 'base_ble_state.dart';
 
 class ConnectState extends RetryBleState {
-  final ScanResult scanResult;
+  final BleDevice scanResult;
   final DataTransferManager manager;
   final bleDialogController = GetIt.instance<BleDialogController>();
 
@@ -15,28 +15,30 @@ class ConnectState extends RetryBleState {
 
   @override
   Future<BleState?> processState() async {
+    final deviceId = scanResult.deviceId;
+
     try {
       try {
-        await scanResult.device.disconnect();
+        await UniversalBle.disconnect(deviceId);
         logger.d("Pre-emptive disconnect for clean state");
         await Future.delayed(const Duration(seconds: 1));
       } catch (_) {
         logger.d("No existing connection to disconnect");
       }
 
-      await scanResult.device.connect(autoConnect: false);
-      BluetoothConnectionState connectionState =
-          await scanResult.device.connectionState.first;
+      await UniversalBle.connect(deviceId);
 
-      if (connectionState == BluetoothConnectionState.connected) {
+      final connectionState = await UniversalBle.getConnectionState(deviceId);
+
+      if (connectionState == BleConnectionState.connected) {
         logger.d("Device connected successfully");
         bleDialogController.update(
             BleDialogStatus.connecting, 'Device connected successfully.');
 
-        manager.connectedDevice = scanResult.device;
+        manager.connectedDevice = scanResult;
 
         final writeState = WriteState(
-          device: scanResult.device,
+          device: scanResult,
           manager: manager,
         );
 

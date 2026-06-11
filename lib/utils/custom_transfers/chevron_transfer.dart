@@ -5,8 +5,6 @@ import 'package:badgemagic/bademagic_module/models/mode.dart';
 import 'package:badgemagic/bademagic_module/models/speed.dart';
 import 'package:badgemagic/bademagic_module/utils/converters.dart';
 import 'package:badgemagic/utils/custom_transfers/common.dart';
-import 'package:flutter_blue_plus/flutter_blue_plus.dart';
-import 'package:get_it/get_it.dart';
 import 'package:logger/logger.dart';
 
 import '../../view/widgets/ble_progress_dialog.dart';
@@ -15,13 +13,7 @@ import '../../view/widgets/ble_progress_dialog_controller.dart';
 Future<void> customTransferChevronAnimation(
     Future<void> Function(DataTransferManager) transferData,
     int speedLevel) async {
-  final bleDialogController = GetIt.instance<BleDialogController>();
-  final adapterState = await FlutterBluePlus.adapterState.first;
-  if (adapterState != BluetoothAdapterState.on) {
-    bleDialogController.update(
-        BleDialogStatus.error, 'Please turn on Bluetooth');
-    return;
-  }
+  if (!await checkAdapterState()) return;
   const int frameCount = 8;
   const int badgeHeight = 11;
   const int badgeWidth = 44;

@@ -65,6 +65,8 @@ class _HomeScreenState extends State<HomeScreen>
   final TextEditingController inlineimagecontroller =
       GetIt.instance.get<InlineImageProvider>().getController();
 
+  final Converters _converters = Converters();
+
   bool isPrefixIconClicked = false;
   bool isDialInteracting = false;
   String previousText = '';
@@ -81,7 +83,6 @@ class _HomeScreenState extends State<HomeScreen>
     _setPortraitOrientation();
     animationProvider = context.read<AnimationBadgeProvider>();
     speedDialProvider = context.read<SpeedDialProvider>();
-    inlineimagecontroller.addListener(_controllerListner);
 
     if (widget.initialSpeed != null) {
       speedDialProvider.setDialValue(widget.initialSpeed!);
@@ -134,8 +135,8 @@ class _HomeScreenState extends State<HomeScreen>
 
       ToastUtils().showToast(
           "Editing badge: ${badgeFilename.substring(0, badgeFilename.length - 5)}");
-    } catch (e) {
-      print("Failed to load badge data: $e");
+    } catch (e, st) {
+      debugPrint("Failed to load badge data: $e\n$st");
       ToastUtils().showToast("Failed to load badge data");
     }
   }
@@ -190,7 +191,6 @@ class _HomeScreenState extends State<HomeScreen>
     _vectorScrollController.dispose();
     WidgetsBinding.instance.removeObserver(this);
     inlineimagecontroller.removeListener(handleTextChange);
-    inlineimagecontroller.removeListener(_controllerListner);
     _tabController.dispose();
     super.dispose();
   }
@@ -205,7 +205,7 @@ class _HomeScreenState extends State<HomeScreen>
       }
       animationProvider.badgeAnimation(
         inlineimagecontroller.text,
-        Converters(),
+        _converters,
         animationProvider.isEffectActive(InvertLEDEffect()),
       );
       if (mounted) setState(() {});
@@ -252,7 +252,6 @@ class _HomeScreenState extends State<HomeScreen>
                             borderRadius: BorderRadius.circular(10.r),
                             elevation: 4,
                             child: ExtendedTextField(
-                              onChanged: (value) {},
                               controller: inlineimagecontroller,
                               specialTextSpanBuilder: ImageBuilder(),
                               style: Provider.of<FontProvider>(context)
@@ -441,7 +440,7 @@ class _HomeScreenState extends State<HomeScreen>
                                             fontProvider.changeFont(newFont);
                                             animationProvider.badgeAnimation(
                                               inlineimagecontroller.text,
-                                              Converters(),
+                                              _converters,
                                               animationProvider.isEffectActive(
                                                   InvertLEDEffect()),
                                             );
@@ -619,6 +618,7 @@ class _HomeScreenState extends State<HomeScreen>
 
                                       ToastUtils().showToast(
                                           "Badge Updated Successfully");
+                                      if (!context.mounted) return;
                                       Navigator.pushNamedAndRemoveUntil(
                                         context,
                                         '/savedBadge',
@@ -743,47 +743,45 @@ class _HomeScreenState extends State<HomeScreen>
 
   void handleTextChange() {
     final currentText = inlineimagecontroller.text;
-    final selection = inlineimagecontroller.selection;
 
-    // Always reset to text animation if a special animation is selected and user types
-    if (animationProvider.isSpecialAnimationSelected() &&
-        currentText.isNotEmpty) {
-      animationProvider.resetToTextAnimation();
-      animationProvider.badgeAnimation(currentText, Converters(),
-          animationProvider.isEffectActive(InvertLEDEffect()));
-      setState(() {}); // Ensure UI updates
-    }
+    if (currentText != previousText) {
+      if (animationProvider.isSpecialAnimationSelected() &&
+          currentText.isNotEmpty) {
+        animationProvider.resetToTextAnimation();
+      }
 
-    if (previousText.length > currentText.length) {
-      final deletionIndex = selection.baseOffset;
-      final regex = RegExp(r'<<\d+>>');
-      final matches = regex.allMatches(previousText);
+      final selection = inlineimagecontroller.selection;
+      if (previousText.length > currentText.length) {
+        final deletionIndex = selection.baseOffset;
+        final regex = RegExp(r'<<\d+>>');
+        final matches = regex.allMatches(previousText);
 
-      bool placeholderDeleted = false;
-      for (final match in matches) {
-        if (deletionIndex > match.start && deletionIndex < match.end) {
-          inlineimagecontroller.text =
-              previousText.replaceRange(match.start, match.end, '');
-          inlineimagecontroller.selection =
-              TextSelection.collapsed(offset: match.start);
-          placeholderDeleted = true;
-          break;
+        bool placeholderDeleted = false;
+        for (final match in matches) {
+          if (deletionIndex > match.start && deletionIndex < match.end) {
+            inlineimagecontroller.text =
+                previousText.replaceRange(match.start, match.end, '');
+            inlineimagecontroller.selection =
+                TextSelection.collapsed(offset: match.start);
+            placeholderDeleted = true;
+            break;
+          }
         }
+        if (!placeholderDeleted) {
+          previousText = inlineimagecontroller.text;
+        }
+      } else {
+        previousText = currentText;
       }
-      if (!placeholderDeleted) {
-        previousText = inlineimagecontroller.text;
-      }
-    } else {
-      previousText = currentText;
-    }
-  }
 
-  void _controllerListner() {
-    animationProvider.badgeAnimation(
-      inlineImageProvider.getController().text,
-      Converters(),
-      animationProvider.isEffectActive(InvertLEDEffect()),
-    );
+      animationProvider.badgeAnimation(
+        inlineimagecontroller.text,
+        _converters,
+        animationProvider.isEffectActive(InvertLEDEffect()),
+      );
+
+      setState(() {});
+    }
   }
 
   @override

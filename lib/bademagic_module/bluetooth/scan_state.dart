@@ -2,10 +2,11 @@ import 'dart:async';
 import 'package:badgemagic/bademagic_module/bluetooth/connect_state.dart';
 import 'package:badgemagic/bademagic_module/bluetooth/datagenerator.dart';
 import 'package:badgemagic/providers/BadgeScanProvider.dart';
-import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:get_it/get_it.dart';
 import '../../view/widgets/ble_progress_dialog.dart';
 import '../../view/widgets/ble_progress_dialog_controller.dart';
+import 'package:universal_ble/universal_ble.dart';
+import '../../globals/globals.dart';
 import 'base_ble_state.dart';
 
 class ScanState extends NormalBleState {
@@ -13,6 +14,8 @@ class ScanState extends NormalBleState {
   final BadgeScanMode mode;
   final List<String> allowedNames;
   final bleDialogController = GetIt.instance<BleDialogController>();
+
+  final String targetServiceUuid = serviceUuid;
 
   ScanState({
     required this.manager,
@@ -23,16 +26,17 @@ class ScanState extends NormalBleState {
   @override
   Future<BleState?> processState() async {
     manager.clearConnectedDevice();
-    await FlutterBluePlus.stopScan();
+    await UniversalBle.stopScan();
 
     Completer<BleState?> nextStateCompleter = Completer();
-    StreamSubscription<List<ScanResult>>? subscription;
+    StreamSubscription<BleDevice>? subscription;
+    Timer? timeoutTimer;
 
     bool isCompleted = false;
     try {
-      subscription = FlutterBluePlus.scanResults.listen(
-        (results) async {
-          if (isCompleted || results.isEmpty) return;
+      subscription = UniversalBle.scanStream.listen(
+        (device) async {
+          if (isCompleted) return;
 
           try {
             final normalizedAllowedNames = allowedNames
@@ -40,37 +44,33 @@ class ScanState extends NormalBleState {
                 .where((e) => e.isNotEmpty)
                 .toList();
 
-            final foundDevice = results.firstWhere(
-              (result) {
-                final matchesUuid = result.advertisementData.serviceUuids
-                    .contains(Guid("0000fee0-0000-1000-8000-00805f9b34fb"));
+            final matchesUuid = device.services.contains(targetServiceUuid);
 
-                final deviceName = result.device.name.trim().toLowerCase();
-                final matchesName = mode == BadgeScanMode.any ||
-                    normalizedAllowedNames.contains(deviceName);
+            final deviceName = (device.name ?? "").trim().toLowerCase();
+            final matchesName = mode == BadgeScanMode.any ||
+                normalizedAllowedNames.contains(deviceName);
 
-                return matchesUuid && matchesName;
-              },
-              orElse: () => throw Exception("Matching device not found."),
-            );
-
-            isCompleted = true;
-            FlutterBluePlus.stopScan();
-            bleDialogController.update(
+            if (matchesUuid && matchesName) {
+              isCompleted = true;
+              timeoutTimer?.cancel();
+              await UniversalBle.stopScan();
+              bleDialogController.update(
                 BleDialogStatus.connecting, 'Device found. Connecting...');
 
-            nextStateCompleter.complete(ConnectState(
-              scanResult: foundDevice,
-              manager: manager,
-            ));
+              nextStateCompleter.complete(ConnectState(
+                scanResult: device,
+                manager: manager,
+              ));
+            }
           } catch (e) {
-            logger.w("No matching device found in this batch: $e");
+            logger.w("Device discovered but filtered out: $e");
           }
         },
         onError: (e) {
           if (!isCompleted) {
             isCompleted = true;
-            FlutterBluePlus.stopScan();
+            timeoutTimer?.cancel();
+            UniversalBle.stopScan();
             logger.e("Scan error: $e");
             bleDialogController.update(
                 BleDialogStatus.error, 'Scan error occurred.');
@@ -80,29 +80,30 @@ class ScanState extends NormalBleState {
           }
         },
       );
-      await FlutterBluePlus.startScan(
-        withServices: [Guid("0000fee0-0000-1000-8000-00805f9b34fb")],
-        removeIfGone: Duration(seconds: 5),
-        continuousUpdates: true,
-        timeout: const Duration(seconds: 15), // Reduced scan timeout.
+
+      await UniversalBle.startScan(
+        scanFilter: ScanFilter(
+          withServices: [targetServiceUuid],
+        ),
       );
 
-      await Future.delayed(const Duration(seconds: 1));
-
-      if (!isCompleted) {
-        isCompleted = true;
-        FlutterBluePlus.stopScan();
-        bleDialogController.update(BleDialogStatus.error, 'Device not found.');
-        nextStateCompleter.completeError(Exception('Device not found.'));
-      }
+      timeoutTimer = Timer(const Duration(seconds: 15), () async {
+        if (!isCompleted) {
+          isCompleted = true;
+          await UniversalBle.stopScan();
+          bleDialogController.update(BleDialogStatus.error, 'Device not found.');
+          nextStateCompleter.completeError(Exception('Device not found.'));
+        }
+      });
 
       return await nextStateCompleter.future;
     } catch (e) {
+      timeoutTimer?.cancel();
       logger.e("Exception during scanning: $e");
       throw Exception("Please check if the device is turned on and retry.");
     } finally {
       await subscription?.cancel();
-      await FlutterBluePlus.stopScan();
+      await UniversalBle.stopScan();
     }
   }
 }

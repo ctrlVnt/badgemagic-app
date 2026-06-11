@@ -8,7 +8,6 @@ import 'package:badgemagic/bademagic_module/utils/converters.dart';
 import 'package:badgemagic/utils/custom_transfers/common.dart';
 import 'package:logger/logger.dart';
 
-
 Future<void> customTransferBrokenHeartsAnimation(
     Future<void> Function(DataTransferManager) transferData,
     int speedLevel) async {

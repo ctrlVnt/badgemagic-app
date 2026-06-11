@@ -8,7 +8,6 @@ import 'package:badgemagic/badge_animation/ani_cycle.dart';
 import 'package:badgemagic/utils/custom_transfers/common.dart';
 import 'package:logger/logger.dart';
 
-
 Future<void> customTransferCycleAnimation(
     Future<void> Function(DataTransferManager) transferData,
     int speedLevel) async {

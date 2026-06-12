@@ -120,9 +120,8 @@ class SaveBadgeCard extends StatelessWidget {
                       },
                     ),
                     IconButton(
-                      icon: Image.asset(
-                        "assets/icons/t_updown.png",
-                        height: 24.h,
+                      icon: const Icon(
+                        Icons.bluetooth_searching_sharp,
                         color: Colors.black,
                       ),
                       onPressed: () {

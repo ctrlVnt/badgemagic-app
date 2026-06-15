@@ -52,4 +52,11 @@ class ConnectState extends RetryBleState {
       rethrow;
     }
   }
+
+  static Future<void> stopAllBleOperations() async {
+    WriteState.cancelTransfer();
+    try {
+      await UniversalBle.stopScan();
+    } catch (_) {}
+  }
 }

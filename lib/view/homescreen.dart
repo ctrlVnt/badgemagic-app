@@ -695,7 +695,7 @@ class _HomeScreenState extends State<HomeScreen>
 
     showDialog(
       context: context,
-      barrierDismissible: true,
+      barrierDismissible: false,
       builder: (context) {
         return ValueListenableBuilder<BleDialogStatus>(
           valueListenable: bleDialogController.status,

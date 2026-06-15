@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../bademagic_module/bluetooth/connect_state.dart';
 import '../../constants.dart';
 
 enum BleDialogStatus { searching, connecting, transferring, success, error }
@@ -23,60 +24,72 @@ class BleProgressDialog extends StatelessWidget {
         status == BleDialogStatus.success || status == BleDialogStatus.error;
 
     return AlertDialog(
-      backgroundColor: Colors.white,
-      surfaceTintColor: Colors.transparent,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.r)),
-      contentPadding: EdgeInsets.all(16.dg),
-      content: SizedBox(
-        width: 150.w,
-        height: 160.h,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            _buildIconOrAnimation(),
-            SizedBox(height: 16.h),
-            Text(
-              message,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 13.sp,
-                fontWeight: FontWeight.w600,
-                color: Colors.black87,
-              ),
-            ),
-            if (status == BleDialogStatus.transferring) ...[
-              SizedBox(height: 12.h),
-              ClipRRect(
-                borderRadius: BorderRadius.circular(4.r),
-                child: LinearProgressIndicator(
-                  value: progress,
-                  backgroundColor: Colors.grey.shade200,
-                  color: indicatorColor,
-                  minHeight: 6.h,
+        backgroundColor: Colors.white,
+        surfaceTintColor: Colors.transparent,
+        shape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.r)),
+        contentPadding: EdgeInsets.all(16.dg),
+        content: SizedBox(
+          width: 150.w,
+          height: 100.h,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _buildIconOrAnimation(),
+              SizedBox(height: 16.h),
+              Text(
+                message,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 13.sp,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black87,
                 ),
               ),
+              if (status == BleDialogStatus.transferring) ...[
+                SizedBox(height: 12.h),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(4.r),
+                  child: LinearProgressIndicator(
+                    value: progress,
+                    backgroundColor: Colors.grey.shade200,
+                    color: indicatorColor,
+                    minHeight: 6.h,
+                  ),
+                ),
+              ],
             ],
-          ],
+          ),
         ),
-      ),
-      actionsAlignment: MainAxisAlignment.center,
-      actions: isFinished
-          ? [
-              TextButton(
-                style: TextButton.styleFrom(
-                  foregroundColor: Colors.black,
-                  textStyle:
-                      TextStyle(fontSize: 14.sp, fontWeight: FontWeight.bold),
-                ),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: Text(MaterialLocalizations.of(context).okButtonLabel),
+        actionsAlignment: MainAxisAlignment.center,
+        actions: [
+          if (isFinished)
+            TextButton(
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.black,
+                textStyle:
+                    TextStyle(fontSize: 14.sp, fontWeight: FontWeight.bold),
               ),
-            ]
-          : null,
-    );
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text(MaterialLocalizations.of(context).okButtonLabel),
+            ),
+          if (!isFinished)
+            TextButton(
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.black,
+                textStyle:
+                    TextStyle(fontSize: 14.sp, fontWeight: FontWeight.bold),
+              ),
+              onPressed: () {
+                ConnectState.stopAllBleOperations();
+                Navigator.of(context).pop();
+              },
+              child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
+            ),
+        ]);
   }
 
   Widget _buildIconOrAnimation() {

@@ -13,6 +13,7 @@ class WriteState extends NormalBleState {
   final DataTransferManager manager;
   final bleDialogController = GetIt.instance<BleDialogController>();
 
+  static bool isCancellationRequested = false;
   static const int _maxRetries = 3;
   static const Duration _retryDelay = Duration(milliseconds: 200);
   static const Duration _chunkDelay = Duration(milliseconds: 120);
@@ -21,6 +22,23 @@ class WriteState extends NormalBleState {
   static const Duration _postDisconnectDelay = Duration(milliseconds: 500);
 
   WriteState({required this.manager, required this.device});
+
+  static Future<void> cancelTransfer() async {
+    isCancellationRequested = true;
+    await Future.delayed(const Duration(seconds: 1));
+    isCancellationRequested = false;
+  }
+
+  BleState? _handleAbortedState() {
+    bleDialogController.update(
+      BleDialogStatus.error,
+      "Operation cancelled",
+    );
+    return CompletedState(
+      isSuccess: false,
+      message: "Transfer aborted",
+    );
+  }
 
   @override
   Future<BleState?> processState() async {
@@ -33,6 +51,7 @@ class WriteState extends NormalBleState {
 
     try {
       await Future.delayed(_initialDelay);
+      if (isCancellationRequested) return _handleAbortedState();
 
       final services = await UniversalBle.discoverServices(deviceId);
       final serviceExists = services.any((s) => s.uuid == serviceUuid);
@@ -41,6 +60,12 @@ class WriteState extends NormalBleState {
       }
 
       for (final List<int> chunk in dataChunks) {
+        if (isCancellationRequested) {
+          logger.w(
+              "Trasferimento interrotto dall'utente prima del chunk $currentChunkIndex.");
+          return _handleAbortedState();
+        }
+
         currentChunkIndex++;
         final double currentProgress = currentChunkIndex / totalChunks;
 
@@ -61,12 +86,20 @@ class WriteState extends NormalBleState {
 
       logger.d("All chunks written successfully");
 
+      if (isCancellationRequested) return _handleAbortedState();
+
       return CompletedState(
         isSuccess: true,
         message: "Data transferred successfully",
       );
     } catch (e) {
       logger.e("Transfer failed: $e");
+      if (!isCancellationRequested) {
+        bleDialogController.update(
+          BleDialogStatus.error,
+          "Transfer failed.\nPlease retry.",
+        );
+      }
       rethrow;
     } finally {
       await _safeDisconnect(deviceId);
@@ -80,6 +113,7 @@ class WriteState extends NormalBleState {
     required int totalChunks,
   }) async {
     for (int attempt = 1; attempt <= _maxRetries; attempt++) {
+      if (isCancellationRequested) return;
       try {
         await UniversalBle.write(
           deviceId,

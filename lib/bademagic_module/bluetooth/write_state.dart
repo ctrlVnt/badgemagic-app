@@ -30,10 +30,6 @@ class WriteState extends NormalBleState {
   }
 
   BleState? _handleAbortedState() {
-    bleDialogController.update(
-      BleDialogStatus.error,
-      "Operation cancelled",
-    );
     return CompletedState(
       isSuccess: false,
       message: "Transfer aborted",
@@ -61,8 +57,6 @@ class WriteState extends NormalBleState {
 
       for (final List<int> chunk in dataChunks) {
         if (isCancellationRequested) {
-          logger.w(
-              "Trasferimento interrotto dall'utente prima del chunk $currentChunkIndex.");
           return _handleAbortedState();
         }
 

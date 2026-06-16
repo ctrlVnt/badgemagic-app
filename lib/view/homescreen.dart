@@ -22,7 +22,6 @@ import 'package:badgemagic/view/special_text_field.dart';
 import 'package:badgemagic/view/widgets/common_scaffold_widget.dart';
 import 'package:badgemagic/view/widgets/homescreentabs.dart';
 import 'package:badgemagic/view/widgets/save_badge_dialog.dart';
-import 'package:badgemagic/view/widgets/speedial.dart';
 import 'package:badgemagic/view/widgets/transitiontab.dart';
 import 'package:badgemagic/view/widgets/vectorview.dart';
 import 'package:badgemagic/virtualbadge/view/animated_badge.dart';
@@ -242,6 +241,42 @@ class _HomeScreenState extends State<HomeScreen>
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         AnimationBadge(),
+                        Consumer<SpeedDialProvider>(
+                          builder: (context, speedProvider, _) {
+                            double currentSpeed =
+                                speedProvider.getOuterValue().toDouble();
+                            return Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Padding(
+                                  padding:
+                                      EdgeInsets.symmetric(horizontal: 20.w),
+                                  child: Slider(
+                                    value: currentSpeed,
+                                    min: 1.0,
+                                    max: 8.0,
+                                    divisions: 7,
+                                    label: currentSpeed.round().toString(),
+                                    activeColor: colorPrimary,
+                                    inactiveColor: dividerColor,
+                                    onChanged: (double newValue) {
+                                      speedProvider
+                                          .setDialValue(newValue.round());
+                                    },
+                                  ),
+                                ),
+                                Text(
+                                  "${l10n.speed}: ${currentSpeed.round()}",
+                                  style: TextStyle(
+                                    fontSize: 12.sp,
+                                    fontWeight: FontWeight.w500,
+                                    color: mdGrey400,
+                                  ),
+                                ),
+                              ],
+                            );
+                          },
+                        ),
                         Padding(
                           padding: EdgeInsets.symmetric(
                               horizontal: 15.w, vertical: 12.h),
@@ -512,10 +547,6 @@ class _HomeScreenState extends State<HomeScreen>
                             labelPadding: EdgeInsets.symmetric(horizontal: 4.w),
                             tabs: [
                               Tab(
-                                key: const ValueKey('tab_speed'),
-                                text: l10n.speedTitle,
-                              ),
-                              Tab(
                                 key: const ValueKey('tab_transition'),
                                 text: l10n.transitionTitle,
                               ),
@@ -547,15 +578,6 @@ class _HomeScreenState extends State<HomeScreen>
                                   physics: const NeverScrollableScrollPhysics(),
                                   controller: _tabController,
                                   children: [
-                                    GestureDetector(
-                                      onPanDown: (_) => setState(
-                                          () => isDialInteracting = true),
-                                      onPanCancel: () => setState(
-                                          () => isDialInteracting = false),
-                                      onPanEnd: (_) => setState(
-                                          () => isDialInteracting = false),
-                                      child: RadialDial(),
-                                    ),
                                     const TransitionTab(),
                                     const EffectTab(),
                                     const AnimationTab(),

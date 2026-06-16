@@ -95,46 +95,44 @@ class _DrawBadgeState extends State<DrawBadge> {
 
                 const SizedBox(height: 8),
 
-                // Control buttons - compact layout with closer spacing
+                // Control buttons - grid adaptive wrap layout
                 Expanded(
                   flex: 2,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Flexible(
-                              child: _buildCompactButton(
-                                  true, Icons.edit, l10n.draw)),
-                          const SizedBox(width: 2),
-                          Flexible(
-                              child: _buildCompactButton(
-                                  false, Icons.delete, l10n.erase,
-                                  iconAsset: 'assets/icons/eraser.svg')),
-                          const SizedBox(width: 2),
-                          Flexible(child: _buildResetButton()),
-                          const SizedBox(width: 2),
-                          Flexible(child: _buildSaveButton(fileHelper)),
-                          const SizedBox(width: 2),
-                          Flexible(child: _buildShapesToggleButton()),
-                          const SizedBox(width: 2),
-                          Flexible(child: _buildUndoButton()),
-                          const SizedBox(width: 2),
-                          Flexible(child: _buildRedoButton()),
-                        ],
-                      ),
-                      const SizedBox(height: 8),
-                    ],
+                  child: SingleChildScrollView(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Wrap(
+                          alignment: WrapAlignment.center,
+                          runAlignment: WrapAlignment.center,
+                          spacing: 4.0,
+                          runSpacing: 6.0,
+                          children: [
+                            _buildCompactButton(true, Icons.edit, l10n.draw),
+                            _buildCompactButton(false, Icons.delete, l10n.erase,
+                                iconAsset: 'assets/icons/eraser.svg'),
+                            _buildResetButton(),
+                            _buildSaveButton(fileHelper),
+                            _buildShapesToggleButton(),
+                            _buildUndoButton(),
+                            _buildRedoButton(),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+                      ],
+                    ),
                   ),
                 ),
-                // Shape options - only show when toggled, fixed height
+
+                // Shape options - adaptive wrap layout
                 if (_showShapeOptions)
                   Container(
-                    height: 60,
-                    padding: const EdgeInsets.symmetric(horizontal: 8),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    child: Wrap(
+                      alignment: WrapAlignment.center,
+                      spacing: 4.0,
+                      runSpacing: 4.0,
                       children: [
                         Semantics(
                           label: 'Free',

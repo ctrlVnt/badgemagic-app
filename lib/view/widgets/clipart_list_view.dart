@@ -14,10 +14,13 @@ class SavedClipartListView extends StatelessWidget {
 
   final Future<void> Function(String) refreshClipartCallback;
 
+  final Function(String) onClipartSelected;
+
   SavedClipartListView({
     super.key,
     required this.images,
     required this.refreshClipartCallback,
+    required this.onClipartSelected,
   });
 
   @override
@@ -56,29 +59,39 @@ class SavedClipartListView extends StatelessWidget {
             children: [
               Expanded(
                 flex: 3,
-                child: FutureBuilder<Uint8List?>(
-                  future: image,
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Align(
-                        alignment: Alignment.centerLeft,
-                        child: SizedBox(
-                          width: 48,
-                          height: 48,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        ),
-                      );
-                    } else if (snapshot.hasData && snapshot.data != null) {
-                      return Align(
-                        alignment: Alignment.centerLeft,
-                        child: Image.memory(
-                          snapshot.data!,
-                          scale: 0.5,
-                        ),
-                      );
+                child: InkWell(
+                  onTap: () {
+                    String clipartName = fileName;
+                    if (clipartName.endsWith('.json')) {
+                      clipartName =
+                          clipartName.substring(0, clipartName.length - 5);
                     }
-                    return const SizedBox.shrink();
+                    onClipartSelected(clipartName);
                   },
+                  child: FutureBuilder<Uint8List?>(
+                    future: image,
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Align(
+                          alignment: Alignment.centerLeft,
+                          child: SizedBox(
+                            width: 48,
+                            height: 48,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          ),
+                        );
+                      } else if (snapshot.hasData && snapshot.data != null) {
+                        return Align(
+                          alignment: Alignment.centerLeft,
+                          child: Image.memory(
+                            snapshot.data!,
+                            scale: 0.5,
+                          ),
+                        );
+                      }
+                      return const SizedBox.shrink();
+                    },
+                  ),
                 ),
               ),
               const Spacer(),

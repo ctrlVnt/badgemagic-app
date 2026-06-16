@@ -69,6 +69,7 @@ class _HomeScreenState extends State<HomeScreen>
   String previousText = '';
   String _cachedText = '';
   String errorVal = "";
+  final int tabNumber = 4;
   late final ScrollController _vectorScrollController;
 
   @override
@@ -93,7 +94,7 @@ class _HomeScreenState extends State<HomeScreen>
       }
     });
     _startImageCaching();
-    _tabController = TabController(length: 4, vsync: this);
+    _tabController = TabController(length: tabNumber, vsync: this);
   }
 
   Future<void> _loadBadgeDataFromDisk(String badgeFilename) async {
@@ -225,7 +226,7 @@ class _HomeScreenState extends State<HomeScreen>
       builder: (context, _, __) {
         final l10n = GetIt.instance.get<LocalizationService>().l10n;
         return DefaultTabController(
-          length: 4,
+          length: tabNumber,
           child: CommonScaffold(
             index: 0,
             title: l10n.appTitle,

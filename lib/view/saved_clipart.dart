@@ -83,7 +83,26 @@ class _SavedClipartState extends State<SavedClipart> {
                   logger.i('Clipart $fileName deleted');
                 });
               },
-            ),
+              onClipartSelected: (String clipartName) {
+                try {
+                  int index = imageprovider.clipartsCache.keys
+                      .toList()
+                      .indexOf(clipartName);
+                  if (index == -1) {
+                    index = imageprovider.clipartsCache.keys
+                        .toList()
+                        .indexOf("$clipartName.json");
+                  }
+
+                  if (index != -1) {
+                    int finalIndex = imageprovider.vectors.length + index;
+                    imageprovider.insertInlineImage(finalIndex);
+                  }
+
+                  Navigator.pushNamedAndRemoveUntil(
+                      context, '/', (route) => false);
+                } catch (_) {}
+              }),
     );
   }
 }

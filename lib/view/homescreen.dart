@@ -69,7 +69,7 @@ class _HomeScreenState extends State<HomeScreen>
   String previousText = '';
   String _cachedText = '';
   String errorVal = "";
-  final int tabNumber = 4;
+  final int tabNumber = 3;
   late final ScrollController _vectorScrollController;
 
   @override

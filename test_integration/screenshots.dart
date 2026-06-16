@@ -44,10 +44,6 @@ void main() async {
       await tester.tap(fixedAnimationContainer);
       await tester.pumpAndSettle();
 
-      final speedTabText = find.text('Speed');
-      await tester.tap(speedTabText);
-      await tester.pumpAndSettle();
-
       final inputField = find.byType(ExtendedTextField);
       await tester.tap(inputField);
       await tester.pumpAndSettle();
@@ -125,7 +121,6 @@ void main() async {
 
       await tester.tap(invertEffectContainer);
       await tester.pumpAndSettle();
-      await tester.tap(speedTabText);
       await tester.pumpAndSettle();
 
       ScaffoldState state = tester.firstState(find.byType(Scaffold));

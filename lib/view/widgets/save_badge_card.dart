@@ -37,7 +37,6 @@ class SaveBadgeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    BadgeMessageProvider badge = BadgeMessageProvider();
     return Container(
       width: 370.w,
       padding: EdgeInsets.all(6.dg),

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:badgemagic/bademagic_module/utils/converters.dart';
 import 'package:badgemagic/bademagic_module/utils/file_helper.dart';
 import 'package:badgemagic/bademagic_module/utils/toast_utils.dart';
@@ -80,18 +82,34 @@ class _DrawBadgeState extends State<DrawBadge> {
                 const SizedBox(height: 8),
 
                 // Badge takes most of the available space
-                Expanded(
-                  flex: 6,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    child: BMBadge(
-                      providerInit: (provider) => drawToggle = provider,
-                      badgeGrid: widget.badgeGrid
-                          ?.map((e) => e.map((e) => e == 1).toList())
-                          .toList(),
-                    ),
-                  ),
-                ),
+                Platform.isAndroid || Platform.isIOS
+                    ? Expanded(
+                        flex: 6,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                          child: BMBadge(
+                            providerInit: (provider) => drawToggle = provider,
+                            badgeGrid: widget.badgeGrid
+                                ?.map((e) => e.map((e) => e == 1).toList())
+                                .toList(),
+                          ),
+                        ),
+                      )
+                    : Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: SizedBox(
+                          width: double.infinity,
+                          child: AspectRatio(
+                            aspectRatio: 44 / 13,
+                            child: BMBadge(
+                              providerInit: (provider) => drawToggle = provider,
+                              badgeGrid: widget.badgeGrid
+                                  ?.map((e) => e.map((e) => e == 1).toList())
+                                  .toList(),
+                            ),
+                          ),
+                        ),
+                      ),
 
                 const SizedBox(height: 8),
 

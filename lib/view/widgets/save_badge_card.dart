@@ -121,11 +121,40 @@ class SaveBadgeCard extends StatelessWidget {
                     ),
                     IconButton(
                       icon: const Icon(
+                        Icons.bluetooth_searching_sharp,
+                        color: Colors.black,
+                      ),
+                      onPressed: () {
+                        logger.d("BadgeData: ${badgeData.value}");
+                        //We can Acrtually call a method to generate the data just by transffering the JSON data
+                        //so we would not necessarily need the Providers.
+                        badge.checkAndTransfer(null, null, null, null, null,
+                            null, badgeData.value, true, context);
+                      },
+                    ),
+                    IconButton(
+                      icon: const Icon(
                         Icons.share,
                         color: Colors.black,
                       ),
                       onPressed: () {
                         file.shareBadgeData(badgeData.key);
+                      },
+                    ),
+                    IconButton(
+                      icon: const Icon(
+                        Icons.delete,
+                        color: Colors.black,
+                      ),
+                      onPressed: () async {
+                        //add a dialog for confirmation before deleting
+                        await _showDeleteDialog(context).then((value) async {
+                          if (value == true) {
+                            file.deleteFile(badgeData.key);
+                            toastUtils.showToast("Badge Deleted Successfully");
+                            await refreshBadgesCallback(badgeData);
+                          }
+                        });
                       },
                     ),
                   ],

@@ -3,6 +3,7 @@ import 'package:badgemagic/bademagic_module/bluetooth/connect_state.dart';
 import 'package:badgemagic/bademagic_module/bluetooth/datagenerator.dart';
 import 'package:badgemagic/providers/BadgeScanProvider.dart';
 import 'package:get_it/get_it.dart';
+import '../../services/localization_service.dart';
 import '../../view/widgets/ble_progress_dialog.dart';
 import '../../view/widgets/ble_progress_dialog_controller.dart';
 import 'package:universal_ble/universal_ble.dart';
@@ -14,6 +15,7 @@ class ScanState extends NormalBleState {
   final BadgeScanMode mode;
   final List<String> allowedNames;
   final bleDialogController = GetIt.instance<BleDialogController>();
+  final l10n = GetIt.instance.get<LocalizationService>().l10n;
 
   final String targetServiceUuid = serviceUuid;
 
@@ -55,7 +57,7 @@ class ScanState extends NormalBleState {
               timeoutTimer?.cancel();
               await UniversalBle.stopScan();
               bleDialogController.update(
-                  BleDialogStatus.connecting, 'Device found. Connecting...');
+                  BleDialogStatus.connecting, l10n.deviceFound);
 
               nextStateCompleter.complete(ConnectState(
                 scanResult: device,
@@ -72,8 +74,7 @@ class ScanState extends NormalBleState {
             timeoutTimer?.cancel();
             UniversalBle.stopScan();
             logger.e("Scan error: $e");
-            bleDialogController.update(
-                BleDialogStatus.error, 'Scan error occurred.');
+            bleDialogController.update(BleDialogStatus.error, l10n.scanError);
             nextStateCompleter.completeError(
               Exception("Error during scanning: $e"),
             );
@@ -91,8 +92,7 @@ class ScanState extends NormalBleState {
         if (!isCompleted) {
           isCompleted = true;
           await UniversalBle.stopScan();
-          bleDialogController.update(
-              BleDialogStatus.error, 'Device not found.');
+          bleDialogController.update(BleDialogStatus.error, l10n.noBadgesFound);
           nextStateCompleter.completeError(Exception('Device not found.'));
         }
       });
@@ -101,7 +101,7 @@ class ScanState extends NormalBleState {
     } catch (e) {
       timeoutTimer?.cancel();
       logger.e("Exception during scanning: $e");
-      throw Exception("Please check if the device is turned on and retry.");
+      throw Exception("Please check if the device is turned on and retry");
     } finally {
       await subscription?.cancel();
       await UniversalBle.stopScan();

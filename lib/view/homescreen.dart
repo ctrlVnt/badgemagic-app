@@ -692,7 +692,9 @@ class _HomeScreenState extends State<HomeScreen>
   void _showBleTransferDialog(
       BuildContext context, InlineImageProvider inlineImageProvider) {
     final bleDialogController = GetIt.instance<BleDialogController>();
-    bleDialogController.update(BleDialogStatus.searching, 'Searching...');
+    final l10n = GetIt.instance.get<LocalizationService>().l10n;
+    bleDialogController.update(
+        BleDialogStatus.searching, l10n.searchingDeviceBLE);
 
     showDialog(
       context: context,

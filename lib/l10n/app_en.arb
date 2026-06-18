@@ -204,6 +204,7 @@
   "circle": "Circle",
   "connectToBadgesWithNames": "Connect to badges with the following names",
   "selectAll": "Select All",
+  "selectAll": "Select All",
   "clearAll": "Clear All",
   "addMore": "Add More",
   "scanSettingsSaved": "Scan settings saved",
@@ -213,5 +214,16 @@
   "triangle": "Triangle",
   "clipartSavedSuccessfully": "Clipart saved successfully",
   "badgeScanMode": "Badge Scan Mode",
-  "pleaseSelectClipart": "Please draw or select a clipart before saving"
+  "pleaseSelectClipart": "Please draw or select a clipart before saving",
+  "searchingDeviceBLE": "Searching...",
+  "turnOnBluetoothMessage": "Please turn on Bluetooth",
+  "connexionFailed": "Failed to connect. Retrying...",
+  "connectionSucceeded": "Device connected successfully",
+  "scanError": "Scan error occurred",
+  "deviceFound": "Device found. Connecting...",
+  "transferFailed": "Transfer failed, please try again",
+  "transferAborted": "Transfer aborted",
+  "transferSucceeded": "Data transferred successfully",
+  "noBLEServiceFound": "Required BLE service not found on device",
+  "unknownError": "Unknown Error"
 }

@@ -152,7 +152,7 @@ class BadgeMessageProvider {
 
     if (adapterState != AvailabilityState.poweredOn) {
       bleDialogController.update(
-          BleDialogStatus.error, 'Please turn on Bluetooth');
+          BleDialogStatus.error, l10n.turnOnBluetoothMessage);
       logger.w('Bluetooth is currently disabled/unavailable: $adapterState');
       return;
     }

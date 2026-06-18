@@ -1,5 +1,10 @@
+import 'dart:math';
+
 import 'package:badgemagic/bademagic_module/bluetooth/completed_state.dart';
+import 'package:get_it/get_it.dart';
 import 'package:logger/logger.dart';
+
+import '../../services/localization_service.dart';
 
 abstract class BleState {
   Future<BleState?> process();
@@ -22,6 +27,7 @@ abstract class NormalBleState extends BleState {
 }
 
 abstract class RetryBleState extends BleState {
+  final l10n = GetIt.instance.get<LocalizationService>().l10n;
   final logger = Logger();
 
   final _maxRetries = 3;
@@ -44,8 +50,7 @@ abstract class RetryBleState extends BleState {
           logger.d("Retrying ($attempt/$_maxRetries)...");
         } else {
           logger.e("Max retries reached. Last exception: $lastException");
-          lastException =
-              Exception("Max retries reached. Last exception: $lastException");
+          lastException = Exception(l10n.transferFailed);
         }
       }
     }
@@ -53,6 +58,6 @@ abstract class RetryBleState extends BleState {
     // After max retries, return a CompletedState indicating failure.
     return CompletedState(
         isSuccess: false,
-        message: lastException?.toString() ?? "Unknown error");
+        message: lastException?.toString() ?? l10n.unknownError);
   }
 }

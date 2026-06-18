@@ -1,6 +1,8 @@
+import 'dart:async';
 import 'dart:typed_data';
 import 'package:badgemagic/bademagic_module/bluetooth/datagenerator.dart';
 import 'package:get_it/get_it.dart';
+import '../../services/localization_service.dart';
 import '../../view/widgets/ble_progress_dialog.dart';
 import '../../view/widgets/ble_progress_dialog_controller.dart';
 import 'package:universal_ble/universal_ble.dart';
@@ -12,6 +14,7 @@ class WriteState extends NormalBleState {
   final BleDevice device;
   final DataTransferManager manager;
   final bleDialogController = GetIt.instance<BleDialogController>();
+  final l10n = GetIt.instance.get<LocalizationService>().l10n;
 
   static bool isCancellationRequested = false;
   static const int _maxRetries = 3;
@@ -32,7 +35,7 @@ class WriteState extends NormalBleState {
   BleState? _handleAbortedState() {
     return CompletedState(
       isSuccess: false,
-      message: "Transfer aborted",
+      message: l10n.transferAborted,
     );
   }
 
@@ -45,6 +48,26 @@ class WriteState extends NormalBleState {
     final int totalChunks = dataChunks.length;
     int currentChunkIndex = 0;
 
+    double displayedProgress = 0.0;
+    double targetProgress = 0.0;
+    const double smoothingStep = 0.01;
+    const Duration tickInterval = Duration(milliseconds: 16);
+
+    final Timer progressTimer = Timer.periodic(tickInterval, (_) {
+      if (displayedProgress < targetProgress) {
+        displayedProgress =
+            (displayedProgress + smoothingStep).clamp(0.0, targetProgress);
+
+        final int displayedPercent = (displayedProgress * 100).round();
+
+        bleDialogController.update(
+          BleDialogStatus.transferring,
+          "Sending data...\n$displayedPercent%",
+          newProgress: displayedProgress,
+        );
+      }
+    });
+
     try {
       await Future.delayed(_initialDelay);
       if (isCancellationRequested) return _handleAbortedState();
@@ -52,7 +75,7 @@ class WriteState extends NormalBleState {
       final services = await UniversalBle.discoverServices(deviceId);
       final serviceExists = services.any((s) => s.uuid == serviceUuid);
       if (!serviceExists) {
-        throw Exception("Required BLE service not found on device.");
+        throw Exception(l10n.noBLEServiceFound);
       }
 
       for (final List<int> chunk in dataChunks) {
@@ -61,13 +84,8 @@ class WriteState extends NormalBleState {
         }
 
         currentChunkIndex++;
-        final double currentProgress = currentChunkIndex / totalChunks;
+        targetProgress = currentChunkIndex / totalChunks;
 
-        bleDialogController.update(
-          BleDialogStatus.transferring,
-          "Sending data...\n$currentChunkIndex / $totalChunks",
-          newProgress: currentProgress,
-        );
         await _writeChunkWithRetry(
           deviceId: deviceId,
           chunk: chunk,
@@ -77,6 +95,8 @@ class WriteState extends NormalBleState {
 
         await Future.delayed(_chunkDelay);
       }
+      targetProgress = 1.0;
+      await Future.delayed(const Duration(milliseconds: 300));
 
       logger.d("All chunks written successfully");
 
@@ -84,18 +104,19 @@ class WriteState extends NormalBleState {
 
       return CompletedState(
         isSuccess: true,
-        message: "Data transferred successfully",
+        message: l10n.transferSucceeded,
       );
     } catch (e) {
       logger.e("Transfer failed: $e");
       if (!isCancellationRequested) {
         bleDialogController.update(
           BleDialogStatus.error,
-          "Transfer failed.\nPlease retry.",
+          l10n.transferFailed,
         );
       }
       rethrow;
     } finally {
+      progressTimer.cancel();
       await _safeDisconnect(deviceId);
     }
   }
@@ -149,8 +170,7 @@ class WriteState extends NormalBleState {
         }
       }
     }
-    throw Exception(
-        "Failed to write chunk $chunkIndex after $_maxRetries attempts.");
+    throw Exception(l10n.transferFailed);
   }
 
   Future<void> _safeDisconnect(String deviceId) async {

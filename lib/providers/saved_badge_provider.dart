@@ -13,7 +13,7 @@ import 'package:badgemagic/providers/speed_dial_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:badgemagic/providers/animation_badge_provider.dart';
-import 'package:badgemagic/badge_animation/ani_splitting.dart';
+import 'package:badgemagic/badge_animation/ani_animation.dart';
 import 'package:badgemagic/providers/imageprovider.dart';
 import 'package:badgemagic/services/localization_service.dart';
 import 'package:get_it/get_it.dart';
@@ -392,7 +392,7 @@ class SavedBadgeProvider extends ChangeNotifier {
     }
 
     aniProvider.clearAllEffects();
-    aniProvider.setAnimationMode(SplittingAnimation());
+    aniProvider.setAnimationMode(AniAnimation());
     final previewGrid = List.generate(11, (_) => <bool>[]);
     for (final badge in selected) {
       try {

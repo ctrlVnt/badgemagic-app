@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:badgemagic/bademagic_module/bluetooth/completed_state.dart';
 import 'package:get_it/get_it.dart';
 import 'package:logger/logger.dart';

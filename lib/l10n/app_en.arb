@@ -213,5 +213,6 @@
   "triangle": "Triangle",
   "clipartSavedSuccessfully": "Clipart saved successfully",
   "badgeScanMode": "Badge Scan Mode",
-  "pleaseSelectClipart": "Please draw or select a clipart before saving"
+  "pleaseSelectClipart": "Please draw or select a clipart before saving",
+  "addToBadge": "Add to Badge"
 }

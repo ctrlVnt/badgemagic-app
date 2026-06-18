@@ -6,6 +6,7 @@ import 'package:badgemagic/view/draw_badge_screen.dart';
 import 'package:badgemagic/view/widgets/badge_delete_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import '../../l10n/app_localizations.dart';
 
 class SavedClipartListView extends StatelessWidget {
   final Map<String, List<List<int>>?> images;
@@ -97,7 +98,7 @@ class SavedClipartListView extends StatelessWidget {
                   style: IconButton.styleFrom(
                     backgroundColor: Colors.grey.shade100,
                   ),
-                  child: Text("Add to Badge")),
+                  child: Text(AppLocalizations.of(context)!.addToBadge)),
               SizedBox(width: 10.w),
               IconButton(
                 style: IconButton.styleFrom(

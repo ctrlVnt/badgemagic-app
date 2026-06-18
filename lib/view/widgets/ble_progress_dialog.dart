@@ -30,7 +30,8 @@ class BleProgressDialog extends StatelessWidget {
             surfaceTintColor: Colors.transparent,
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16.r)),
-            contentPadding: EdgeInsets.all(16.dg),
+            contentPadding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 8.h),
+            actionsPadding: EdgeInsets.only(bottom: 8.h),
             content: SizedBox(
               width: 150.w,
               child: Column(
@@ -136,7 +137,7 @@ class _TweakedPulseAnimationState extends State<_TweakedPulseAnimation>
     _controller = AnimationController(
         vsync: this, duration: const Duration(milliseconds: 1000))
       ..repeat(reverse: true);
-    _animation = Tween<double>(begin: 0.7, end: 1.2)
+    _animation = Tween<double>(begin: 0.8, end: 1.0)
         .animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
   }
 

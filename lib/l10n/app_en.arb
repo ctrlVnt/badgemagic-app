@@ -215,7 +215,7 @@
   "clipartSavedSuccessfully": "Clipart saved successfully",
   "badgeScanMode": "Badge Scan Mode",
   "pleaseSelectClipart": "Please draw or select a clipart before saving",
-  "searchingDeviceBLE": "Searching...",
+  "searchingDeviceBLE": "Searching for device...",
   "turnOnBluetoothMessage": "Please turn on Bluetooth",
   "connexionFailed": "Failed to connect. Retrying...",
   "connectionSucceeded": "Device connected successfully",

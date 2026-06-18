@@ -59,8 +59,34 @@ class SavedClipartListView extends StatelessWidget {
             children: [
               Expanded(
                 flex: 3,
-                child: InkWell(
-                  onTap: () {
+                child: FutureBuilder<Uint8List?>(
+                  future: image,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Align(
+                        alignment: Alignment.centerLeft,
+                        child: SizedBox(
+                          width: 48,
+                          height: 48,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        ),
+                      );
+                    } else if (snapshot.hasData && snapshot.data != null) {
+                      return Align(
+                        alignment: Alignment.centerLeft,
+                        child: Image.memory(
+                          snapshot.data!,
+                          scale: 0.5,
+                        ),
+                      );
+                    }
+                    return const SizedBox.shrink();
+                  },
+                ),
+              ),
+              const Spacer(),
+              TextButton(
+                  onPressed: () {
                     String clipartName = fileName;
                     if (clipartName.endsWith('.json')) {
                       clipartName =
@@ -68,33 +94,11 @@ class SavedClipartListView extends StatelessWidget {
                     }
                     onClipartSelected(clipartName);
                   },
-                  child: FutureBuilder<Uint8List?>(
-                    future: image,
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const Align(
-                          alignment: Alignment.centerLeft,
-                          child: SizedBox(
-                            width: 48,
-                            height: 48,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          ),
-                        );
-                      } else if (snapshot.hasData && snapshot.data != null) {
-                        return Align(
-                          alignment: Alignment.centerLeft,
-                          child: Image.memory(
-                            snapshot.data!,
-                            scale: 0.5,
-                          ),
-                        );
-                      }
-                      return const SizedBox.shrink();
-                    },
+                  style: IconButton.styleFrom(
+                    backgroundColor: Colors.grey.shade100,
                   ),
-                ),
-              ),
-              const Spacer(),
+                  child: Text("Add to Badge")),
+              SizedBox(width: 10.w),
               IconButton(
                 style: IconButton.styleFrom(
                   backgroundColor: Colors.grey.shade100,

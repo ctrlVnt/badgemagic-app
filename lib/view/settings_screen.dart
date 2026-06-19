@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:get_it/get_it.dart';
 import 'package:badgemagic/services/localization_service.dart';
 import 'package:badgemagic/main.dart';
+import '../services/firmware_update.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -23,6 +24,11 @@ class SettingsScreenState extends State<SettingsScreen> {
   late List<TextEditingController> _controllers;
   bool _initialized = false;
 
+  final FirmwareUpdateService _updateService = FirmwareUpdateService();
+  bool _isCheckingUpdate = false;
+  Map<String, String>? _availableUpdate;
+  String? _updateStatusMessage;
+
   @override
   void initState() {
     super.initState();
@@ -34,6 +40,27 @@ class SettingsScreenState extends State<SettingsScreen> {
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
     ]);
+  }
+
+  Future<void> _handleManualUpdateCheck() async {
+    setState(() {
+      _isCheckingUpdate = true;
+      _updateStatusMessage = null;
+      _availableUpdate = null;
+    });
+
+    final updateInfo = await _updateService.checkForUpdates();
+
+    if (mounted) {
+      setState(() {
+        _isCheckingUpdate = false;
+        if (updateInfo != null) {
+          _availableUpdate = updateInfo;
+        } else {
+          _updateStatusMessage = "Your firmware is up to date.";
+        }
+      });
+    }
   }
 
   @override
@@ -234,6 +261,101 @@ class SettingsScreenState extends State<SettingsScreen> {
                   ),
                 ],
                 const SizedBox(height: 24),
+                const Divider(),
+                const SizedBox(height: 12),
+                const Text(
+                  "Firmware Update",
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    ElevatedButton.icon(
+                      onPressed: _isCheckingUpdate ? null : _handleManualUpdateCheck,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        foregroundColor: indicatorColor,
+                        elevation: 0,
+                      ).copyWith(
+                        backgroundColor: WidgetStateProperty.resolveWith<Color?>(
+                              (states) => states.contains(WidgetState.disabled) ? Colors.grey.shade100 : Colors.white,
+                        ),
+                      ),
+                      icon: _isCheckingUpdate
+                          ? const SizedBox(
+                        width: 16,
+                        height: 16,
+                        child: CircularProgressIndicator(strokeWidth: 2, color: Colors.red),
+                      )
+                          : const Icon(Icons.refresh),
+                      label: const Text("Check for Updates"),
+                    ),
+                  ],
+                ),
+                if (_updateStatusMessage != null) ...[
+                  const SizedBox(height: 12),
+                  Text(
+                    _updateStatusMessage!,
+                    style: TextStyle(color: Colors.grey.shade700, fontSize: 14),
+                  ),
+                ],
+                if (_availableUpdate != null) ...[
+                  const SizedBox(height: 16),
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.red.shade50,
+                      border: Border.all(color: Colors.red.shade200),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Row(
+                          children: [
+                            Icon(Icons.new_releases, color: Colors.red),
+                            SizedBox(width: 8),
+                            Text(
+                              "New Version Found!",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.red,
+                                  fontSize: 15),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+                        Text("• Version: ${_availableUpdate!['version']}",
+                            style: const TextStyle(fontWeight: FontWeight.w600)),
+                        Text("• Released: ${_availableUpdate!['date']}",
+                            style: const TextStyle(fontWeight: FontWeight.w600)),
+                        const SizedBox(height: 12),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            TextButton(
+                              onPressed: () => setState(() => _availableUpdate = null),
+                              child: const Text("Dismiss", style: TextStyle(color: Colors.black)),
+                            ),
+                            const SizedBox(width: 8),
+                            ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.red,
+                                foregroundColor: Colors.white,
+                              ),
+                              onPressed: () async {
+                                await _updateService.executeFirmwareUpdate(_availableUpdate!['version']!);
+                              },
+                              child: const Text("Update Now"),
+                            ),
+                          ],
+                        )
+                      ],
+                    ),
+                  ),
+                ],
+
+                const SizedBox(height: 32),
                 Center(
                   child: GestureDetector(
                     onTap: () {
@@ -268,35 +390,4 @@ class SettingsScreenState extends State<SettingsScreen> {
       },
     );
   }
-
-//   Widget _buildDropdown({
-//     required String selectedValue,
-//     required List<String> values,
-//     required Function(String) onChanged,
-//   }) {
-//     return Container(
-//       decoration: BoxDecoration(
-//         color: Colors.white,
-//         borderRadius: BorderRadius.circular(8),
-//       ),
-//       padding: const EdgeInsets.symmetric(horizontal: 12),
-//       child: DropdownButtonHideUnderline(
-//         child: DropdownButton<String>(
-//           value: selectedValue,
-//           isExpanded: true,
-//           icon: const Icon(Icons.arrow_drop_down, color: Colors.grey),
-//           onChanged: (String? newValue) {
-//             if (newValue != null) onChanged(newValue);
-//           },
-//           items: values.map<DropdownMenuItem<String>>((String value) {
-//             return DropdownMenuItem<String>(
-//               value: value,
-//               child: Text(value, style: const TextStyle(color: Colors.black)),
-//             );
-//           }).toList(),
-//         ),
-//       ),
-//     );
-//   }
-// }
 }

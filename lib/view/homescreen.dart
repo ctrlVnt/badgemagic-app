@@ -20,6 +20,7 @@ import 'package:badgemagic/providers/speed_dial_provider.dart';
 import 'package:badgemagic/services/localization_service.dart';
 import 'package:badgemagic/view/special_text_field.dart';
 import 'package:badgemagic/view/widgets/common_scaffold_widget.dart';
+import 'package:badgemagic/view/widgets/firmware_update_dialog.dart';
 import 'package:badgemagic/view/widgets/homescreentabs.dart';
 import 'package:badgemagic/view/widgets/save_badge_dialog.dart';
 import 'package:badgemagic/view/widgets/speedial.dart';
@@ -33,6 +34,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get_it/get_it.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../services/firmware_update.dart';
 
 class HomeScreen extends StatefulWidget {
   final String? savedBadgeFilename;
@@ -47,6 +51,9 @@ class HomeScreen extends StatefulWidget {
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
+
+// To avoid popup when we return in home screen
+bool _hasCheckedThisSession = false;
 
 class _HomeScreenState extends State<HomeScreen>
     with
@@ -95,6 +102,34 @@ class _HomeScreenState extends State<HomeScreen>
     });
     _startImageCaching();
     _tabController = TabController(length: 4, vsync: this);
+
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      _initiateFirmwareCheck();
+    });
+  }
+
+  Future<void> _initiateFirmwareCheck() async {
+    final updateService = FirmwareUpdateService();
+    final updateInfo = await updateService.checkForUpdates();
+
+    final prefs = await SharedPreferences.getInstance();
+    var version = updateInfo?['version'];
+    final bool shouldSkip = prefs.getBool('skip_firmware_version_$version') ?? false;
+
+    if (updateInfo != null && mounted && !shouldSkip && !_hasCheckedThisSession) {
+      _hasCheckedThisSession = true;
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return FirmwareUpdateDialog(
+            version: updateInfo['version']!,
+            date: updateInfo['date']!,
+            service: updateService,
+          );
+        },
+      );
+    }
   }
 
   Future<void> _loadBadgeDataFromDisk(String badgeFilename) async {

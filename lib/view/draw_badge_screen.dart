@@ -5,6 +5,7 @@ import 'package:badgemagic/bademagic_module/utils/file_helper.dart';
 import 'package:badgemagic/bademagic_module/utils/toast_utils.dart';
 import 'package:badgemagic/constants.dart';
 import 'package:badgemagic/services/localization_service.dart';
+import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
 import 'package:badgemagic/providers/draw_badge_provider.dart';
 import 'package:badgemagic/view/widgets/common_scaffold_widget.dart';
@@ -140,8 +141,33 @@ class _DrawBadgeState extends State<DrawBadge> {
                 const SizedBox(height: 8),
 
                 // Badge takes most of the available space
-                Platform.isAndroid || Platform.isIOS
+                kIsWeb ||
+                        Platform.isWindows ||
+                        Platform.isMacOS ||
+                        Platform.isLinux
                     ? Expanded(
+                        flex: 8,
+                        child: SingleChildScrollView(
+                            physics: const AlwaysScrollableScrollPhysics(),
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 8.0),
+                              child: SizedBox(
+                                width: double.infinity,
+                                child: AspectRatio(
+                                  aspectRatio: 44 / 13,
+                                  child: BMBadge(
+                                    providerInit: (provider) =>
+                                        drawToggle = provider,
+                                    badgeGrid: widget.badgeGrid
+                                        ?.map((e) =>
+                                            e.map((e) => e == 1).toList())
+                                        .toList(),
+                                  ),
+                                ),
+                              ),
+                            )))
+                    : Expanded(
                         flex: 6,
                         child: Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -150,21 +176,6 @@ class _DrawBadgeState extends State<DrawBadge> {
                             badgeGrid: widget.badgeGrid
                                 ?.map((e) => e.map((e) => e == 1).toList())
                                 .toList(),
-                          ),
-                        ),
-                      )
-                    : Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                        child: SizedBox(
-                          width: double.infinity,
-                          child: AspectRatio(
-                            aspectRatio: 44 / 13,
-                            child: BMBadge(
-                              providerInit: (provider) => drawToggle = provider,
-                              badgeGrid: widget.badgeGrid
-                                  ?.map((e) => e.map((e) => e == 1).toList())
-                                  .toList(),
-                            ),
                           ),
                         ),
                       ),

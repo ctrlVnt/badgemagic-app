@@ -12,6 +12,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 
+import '../../bademagic_module/utils/byte_array_utils.dart';
+import '../../providers/badge_message_provider.dart';
+
 class SaveBadgeCard extends StatelessWidget {
   final MapEntry<String, Map<String, dynamic>> badgeData;
 
@@ -35,6 +38,7 @@ class SaveBadgeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    BadgeMessageProvider badge = BadgeMessageProvider();
     return Container(
       width: 370.w,
       padding: EdgeInsets.all(6.dg),
@@ -114,6 +118,19 @@ class SaveBadgeCard extends StatelessWidget {
                             ),
                           );
                         }
+                      },
+                    ),
+                    IconButton(
+                      icon: const Icon(
+                        Icons.sensors,
+                        color: Colors.black,
+                      ),
+                      onPressed: () {
+                        logger.d("BadgeData: ${badgeData.value}");
+                        //We can Acrtually call a method to generate the data just by transffering the JSON data
+                        //so we would not necessarily need the Providers.
+                        badge.checkAndTransfer(null, null, null, null, null,
+                            null, badgeData.value, true, context);
                       },
                     ),
                     IconButton(

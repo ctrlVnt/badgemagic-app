@@ -121,9 +121,9 @@ class SaveBadgeCard extends StatelessWidget {
                       },
                     ),
                     IconButton(
-                      icon: const Icon(
-                        Icons.sensors,
-                        color: Colors.black,
+                      icon: Image.asset(
+                        "assets/icons/send_to_badge.png",
+                        height: 24.h,
                       ),
                       onPressed: () {
                         logger.d("BadgeData: ${badgeData.value}");

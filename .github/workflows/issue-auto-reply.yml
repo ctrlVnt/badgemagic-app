@@ -17,8 +17,8 @@ jobs:
         id: check_keywords
         run: |
           COMMENT_BODY=$(echo "${{ github.event.comment.body }}" | tr '[:upper:]' '[:lower:]')
-          
-          if [[ "$COMMENT_BODY" == *"assign this to me"* ]] || [[ "$COMMENT_BODY" == *"please assign"* ]]; then
+
+          if [[ "$COMMENT_BODY" == *"assign"* ]] || [[ "$COMMENT_BODY" == *"assigned"* ]]; then
             echo "match=true" >> $GITHUB_OUTPUT
           else
             echo "match=false" >> $GITHUB_OUTPUT

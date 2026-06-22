@@ -1,0 +1,33 @@
+name: "Auto-Reply to Assign Requests"
+
+on:
+  issue_comment:
+    types: [created]
+
+jobs:
+  auto_reply:
+    name: Check comment and reply
+    if: ${{ !github.event.issue.pull_request }}
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+
+    steps:
+      - name: Check for assignment keywords
+        id: check_keywords
+        run: |
+          COMMENT_BODY=$(echo "${{ github.event.comment.body }}" | tr '[:upper:]' '[:lower:]')
+          
+          if [[ "$COMMENT_BODY" == *"assign this to me"* ]] || [[ "$COMMENT_BODY" == *"please assign"* ]]; then
+            echo "match=true" >> $GITHUB_OUTPUT
+          else
+            echo "match=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create auto-reply comment
+        if: steps.check_keywords.outputs.match == 'true'
+        uses: peter-evans/create-or-update-comment@v4
+        with:
+          issue-number: ${{ github.event.issue.number }}
+          body: |
+            Please go ahead and create a PR when you are ready. We do not formally assign issues. Contributors are free to pick up any open issue based on their availability. You can open a PR or even a draft PR to let others know that you’re working on it.

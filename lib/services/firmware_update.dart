@@ -5,7 +5,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
 
 class FirmwareUpdateService {
-  static const String _apiLatestUrl = 'https://api.github.com/repos/fossasia/badgemagic-firmware/releases/latest';
+  static const String _apiLatestUrl =
+      'https://api.github.com/repos/fossasia/badgemagic-firmware/releases/latest';
   static const String _prefKeySkipVersion = 'skip_firmware_version_';
 
   /// Fetches the latest release from GitHub and returns the info if a prompt is needed.
@@ -53,6 +54,6 @@ class FirmwareUpdateService {
   /// Placeholder method for the actual flashing/update procedure.
   Future<void> executeFirmwareUpdate(String version) async {
     // TODO: Implement the OTA transmission logic here in the future
-    logger.e('Starting firmware update execution for version: $version...');
+    logger.i('Starting firmware update execution for version: $version...');
   }
 }

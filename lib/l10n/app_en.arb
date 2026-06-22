@@ -213,5 +213,14 @@
   "triangle": "Triangle",
   "clipartSavedSuccessfully": "Clipart saved successfully",
   "badgeScanMode": "Badge Scan Mode",
-  "pleaseSelectClipart": "Please draw or select a clipart before saving"
+  "pleaseSelectClipart": "Please draw or select a clipart before saving",
+  "checkUpdateStartup": "Check for badge firmware updates on startup",
+  "firmwareUpdate": "Firmware Update",
+  "checkFirmwareUpdateButton": "Check for Updates",
+  "newFirmwareVersionFound": "New Firmware Available",
+  "dialogNewFirmwareVersionFound": "A new firmware version is available for your badge.",
+  "dontRememberFirmwareVersionUpdate": "Don't remind me again for this version",
+  "laterButton": "Later",
+  "updateButton": "Update",
+  "dismissButton": "Dismiss"
 }

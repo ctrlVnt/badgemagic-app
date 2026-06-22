@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import '../../services/firmware_update.dart';
+import '../../services/localization_service.dart';
 
 class FirmwareUpdateDialog extends StatefulWidget {
   final String version;
@@ -22,21 +24,24 @@ class _FirmwareUpdateDialogState extends State<FirmwareUpdateDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = GetIt.instance.get<LocalizationService>().l10n;
     return AlertDialog(
-      title: const Row(
+      title: Row(
         children: [
-          Icon(Icons.system_update, color: Colors.red),
-          SizedBox(width: 10),
-          Text('New Firmware Available'),
+          const Icon(Icons.system_update, color: Colors.red),
+          const SizedBox(width: 10),
+          Text(l10n.newFirmwareVersionFound),
         ],
       ),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('A new firmware version is available for your badge.\n'),
-          Text('• Version: ${widget.version}', style: const TextStyle(fontWeight: FontWeight.bold)),
-          Text('• Date: ${widget.date}', style: const TextStyle(fontWeight: FontWeight.bold)),
+          Text('${l10n.dialogNewFirmwareVersionFound}\n'),
+          Text('• Version: ${widget.version}',
+              style: const TextStyle(fontWeight: FontWeight.bold)),
+          Text('• Date: ${widget.date}',
+              style: const TextStyle(fontWeight: FontWeight.bold)),
           const SizedBox(height: 20),
           Row(
             children: [
@@ -54,10 +59,10 @@ class _FirmwareUpdateDialogState extends State<FirmwareUpdateDialog> {
                 ),
               ),
               const SizedBox(width: 10),
-              const Expanded(
+              Expanded(
                 child: Text(
-                  "Don't remind me again for this version",
-                  style: TextStyle(fontSize: 14),
+                  l10n.dontRememberFirmwareVersionUpdate,
+                  style: const TextStyle(fontSize: 14),
                 ),
               ),
             ],
@@ -72,7 +77,7 @@ class _FirmwareUpdateDialogState extends State<FirmwareUpdateDialog> {
             }
             if (context.mounted) Navigator.pop(context);
           },
-          child: const Text('Later'),
+          child: Text(l10n.laterButton),
         ),
         ElevatedButton(
           style: ElevatedButton.styleFrom(
@@ -87,7 +92,7 @@ class _FirmwareUpdateDialogState extends State<FirmwareUpdateDialog> {
             // Calls the empty placeholder update method
             await widget.service.executeFirmwareUpdate(widget.version);
           },
-          child: const Text('Update'),
+          child: Text(l10n.updateButton),
         ),
       ],
     );

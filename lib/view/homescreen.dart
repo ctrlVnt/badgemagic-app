@@ -36,6 +36,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../globals/globals.dart';
 import '../services/firmware_update.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -114,9 +115,15 @@ class _HomeScreenState extends State<HomeScreen>
 
     final prefs = await SharedPreferences.getInstance();
     var version = updateInfo?['version'];
-    final bool shouldSkip = prefs.getBool('skip_firmware_version_$version') ?? false;
+    final bool shouldSkip =
+        prefs.getBool('skip_firmware_version_$version') ?? false;
+    bool autoCheck = await autocheckFirmwareUpdates();
 
-    if (updateInfo != null && mounted && !shouldSkip && !_hasCheckedThisSession) {
+    if (autoCheck &&
+        updateInfo != null &&
+        mounted &&
+        !shouldSkip &&
+        !_hasCheckedThisSession) {
       _hasCheckedThisSession = true;
       showDialog(
         context: context,

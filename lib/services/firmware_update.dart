@@ -1,8 +1,12 @@
 import 'dart:convert';
 import 'package:badgemagic/bademagic_module/utils/byte_array_utils.dart';
+import 'package:get_it/get_it.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
+
+import '../bademagic_module/utils/toast_utils.dart';
+import 'localization_service.dart';
 
 class FirmwareUpdateService {
   static const String _apiLatestUrl =
@@ -39,6 +43,9 @@ class FirmwareUpdateService {
           'version': version,
           'date': formattedDate,
         };
+      } else {
+        final l10n = GetIt.instance.get<LocalizationService>().l10n;
+        ToastUtils().showToast(l10n.checkFirmwareFailed);
       }
     } catch (e) {
       logger.e('Firmware update check failed: $e');

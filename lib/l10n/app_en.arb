@@ -222,5 +222,7 @@
   "dontRememberFirmwareVersionUpdate": "Don't remind me again for this version",
   "laterButton": "Later",
   "updateButton": "Update",
-  "dismissButton": "Dismiss"
+  "dismissButton": "Dismiss",
+  "alreadyUpdatedStatusMessage": "No new firmware versions found",
+  "checkFirmwareFailed": "Firmware update check failed, please retry"
 }

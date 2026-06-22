@@ -72,7 +72,8 @@ class SettingsScreenState extends State<SettingsScreen> {
         if (updateInfo != null) {
           _availableUpdate = updateInfo;
         } else {
-          _updateStatusMessage = "Your firmware is up to date.";
+          final l10n = GetIt.instance.get<LocalizationService>().l10n;
+          _updateStatusMessage = l10n.alreadyUpdatedStatusMessage;
         }
       });
     }

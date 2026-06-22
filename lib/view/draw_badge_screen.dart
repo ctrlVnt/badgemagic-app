@@ -219,7 +219,7 @@ class _DrawBadgeState extends State<DrawBadge> {
               if (_showShapeOptions)
                 Container(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                      const EdgeInsets.symmetric(horizontal: 128, vertical: 4),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
@@ -236,7 +236,7 @@ class _DrawBadgeState extends State<DrawBadge> {
                               buttonHeight * 0.9),
                         ),
                       ),
-                      const SizedBox(width: 4),
+                      const SizedBox(width: 16),
                       Expanded(
                         child: Semantics(
                           label: 'Square',
@@ -250,7 +250,7 @@ class _DrawBadgeState extends State<DrawBadge> {
                               buttonHeight * 0.9),
                         ),
                       ),
-                      const SizedBox(width: 4),
+                      const SizedBox(width: 16),
                       Expanded(
                         child: Semantics(
                           label: 'Rect',
@@ -264,7 +264,7 @@ class _DrawBadgeState extends State<DrawBadge> {
                               buttonHeight * 0.9),
                         ),
                       ),
-                      const SizedBox(width: 4),
+                      const SizedBox(width: 16),
                       Expanded(
                         child: Semantics(
                           label: 'Circle',
@@ -278,7 +278,7 @@ class _DrawBadgeState extends State<DrawBadge> {
                               buttonHeight * 0.9),
                         ),
                       ),
-                      const SizedBox(width: 4),
+                      const SizedBox(width: 16),
                       Expanded(
                         child: Semantics(
                           label: 'Triangle',

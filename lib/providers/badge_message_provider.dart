@@ -17,6 +17,7 @@ import 'package:universal_ble/universal_ble.dart';
 import 'package:get_it/get_it.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart'; // Import the new EqualizerAnimation
+import 'package:badgemagic/view/widgets/auth_pin_dialog.dart';
 
 Map<int, Mode> modeValueMap = {
   0: Mode.left,
@@ -149,6 +150,40 @@ class BadgeMessageProvider {
       ToastUtils().showErrorToast('Please turn on Bluetooth in your settings');
       logger.w('Bluetooth is currently disabled/unavailable: $adapterState');
       return;
+    }
+
+    bool isAuthenticated = false;
+
+    while (!isAuthenticated) {
+      final String? enteredPin = await showPinAuthDialog(context);
+
+      if (enteredPin == null) {
+        ToastUtils().showToast('Transfer canceled by user');
+        return;
+      }
+
+      //if (enteredPin == '1234') {
+      isAuthenticated = true;
+
+      final List<String> pinHex = enteredPin.codeUnits
+          .map((char) => '0x' + char.toRadixString(16))
+          .toList();
+      Data pinData = Data(messages: [
+        Message(
+            text: pinHex,
+            mode: Mode.fixed,
+            speed: Speed.one,
+            flash: false,
+            marquee: false)
+      ]);
+      await transferData(DataTransferManager(pinData), context: context);
+
+      ToastUtils().showToast('Code verified! Transferring data...');
+      /*} else {
+        ToastUtils()
+            .showErrorToast('Incorrect security code. Please try again.');
+        await Future.delayed(const Duration(milliseconds: 500));
+      }*/
     }
 
     Data data;

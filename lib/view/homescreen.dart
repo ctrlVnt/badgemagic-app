@@ -35,6 +35,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:badgemagic/providers/badge_message_provider.dart';
 
+import '../bademagic_module/bluetooth/datagenerator.dart';
+import '../bademagic_module/models/mode.dart';
+
 class HomeScreen extends StatefulWidget {
   final String? savedBadgeFilename;
   final int? initialSpeed;
@@ -778,7 +781,7 @@ class _HomeScreenState extends State<HomeScreen>
     );
   }
 
-  void _toggleLiveStream(AnimationBadgeProvider animProvider) async {
+  /*void _toggleLiveStream(AnimationBadgeProvider animProvider) async {
     if (_isStreaming) {
       _cleanupStreaming();
       ToastUtils().showToast("Streaming disabled");
@@ -827,6 +830,61 @@ class _HomeScreenState extends State<HomeScreen>
     _streamingTimer = null;
     _streamFrameController?.close();
     _streamFrameController = null;
+  }*/
+
+  void _toggleLiveStream(AnimationBadgeProvider animProvider) async {
+    if (_isStreaming) {
+      _streamingTimer?.cancel();
+      _streamingTimer = null;
+      setState(() {
+        _isStreaming = false;
+      });
+      ToastUtils().showToast("Live Check disattivato");
+    } else {
+      setState(() {
+        _isStreaming = true;
+      });
+
+      ToastUtils().showToast("Live Check attivo (Testo Fisso)");
+
+      // Timer ciclico da 1 secondo che campiona la barra di testo
+      _streamingTimer = Timer.periodic(const Duration(seconds: 20), (timer) async {
+        if (!_isStreaming) {
+          timer.cancel();
+          return;
+        }
+
+        // Estraiamo il testo attuale inserito dall'utente nella barra di input
+        String testoCorrente = inlineimagecontroller.text;
+
+        try {
+          // Generiamo i dati forzando:
+          // - Nessun effetto (flash: false, marq: false, inverted: false)
+          // - Transizione fissa (Mode.fixed) per evitare scorrimenti orizzontali/verticali
+          var data = await badgeData.getBadgeData(
+            testoCorrente,
+            false,         // flash disattivato forzatamente
+            false,         // marquee/marq disattivato forzatamente
+            Speed.one, // Velocità corrente della UI
+            Mode.fixed,    // <--- Bloccato su FISSO (Nessuna animazione)
+            false,         // inversione LED disattivata forzatamente
+          );
+
+          // Impacchettiamo i dati normalmente per la Flash
+          DataTransferManager manager = DataTransferManager(data);
+
+          // Invochiamo il metodo transferData esposto dal tuo provider
+          // Esegue la catena atomica: Cerca -> Connetti -> Scrivi -> Disconnetti
+          await badgeData.transferData(manager, context: context);
+
+          debugPrint("🟢 [Live Check] Scrittura Flash completata per il testo: '$testoCorrente'");
+
+        } catch (e) {
+          // Evitiamo che un errore BLE isolato rompa l'esecuzione dei secondi successivi
+          debugPrint("🔴 [Live Check] Errore di trasferimento ciclico: $e");
+        }
+      });
+    }
   }
 
   void handleTextChange() {

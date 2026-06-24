@@ -16,7 +16,9 @@ import 'package:badgemagic/utils/custom_transfers/transfers.dart';
 import 'package:universal_ble/universal_ble.dart';
 import 'package:get_it/get_it.dart';
 import 'package:logger/logger.dart';
-import 'package:provider/provider.dart'; // Import the new EqualizerAnimation
+import 'package:provider/provider.dart';
+
+import '../bademagic_module/bluetooth/connect_state.dart'; // Import the new EqualizerAnimation
 
 Map<int, Mode> modeValueMap = {
   0: Mode.left,
@@ -174,6 +176,56 @@ class BadgeMessageProvider {
 
     DataTransferManager manager = DataTransferManager(data);
     await transferData(manager, context: context);
+  }
+
+  Future<void> startLiveStream(
+    Stream<List<int>> frameStream, {
+    required BuildContext context,
+  }) async {
+    // 1. Check if Bluetooth is on
+    AvailabilityState adapterState =
+        await UniversalBle.getBluetoothAvailabilityState();
+    if (adapterState != AvailabilityState.poweredOn) {
+      ToastUtils().showErrorToast('Please turn on Bluetooth in your settings');
+      return;
+    }
+
+    // 2. Create a fake manager (since we are bypassing the Flash memory)
+    DataTransferManager emptyManager = DataTransferManager(Data(messages: []));
+    final scanProvider = Provider.of<BadgeScanProvider>(context, listen: false);
+
+    // 3. Prepare the initial ScanState
+    final BleState initialState = ScanState(
+      manager: emptyManager,
+      mode: scanProvider.mode,
+      allowedNames: scanProvider.getSelectedBadgeNames(),
+    );
+
+    // Trick: We need to inject our frameStream into the ConnectState as soon as ScanState generates it.
+    // We modify the state execution loop on the fly.
+    BleState? state = initialState;
+    DateTime now = DateTime.now();
+
+    try {
+      while (state != null) {
+        if (state is ScanState) {
+          // We execute the scan normally
+          state = await state.process();
+        } else if (state is ConnectState) {
+          // When the Scan passes the baton to the Connection, we inject the stream!
+          final connectedStateWithStream = ConnectState(
+            manager: state.manager,
+            scanResult: state.scanResult,
+            frameStream: frameStream, // <--- Key step
+          );
+          state = await connectedStateWithStream.process();
+        } else {
+          state = await state.process();
+        }
+      }
+    } catch (e) {
+      print("Error");
+    }
   }
 }
 

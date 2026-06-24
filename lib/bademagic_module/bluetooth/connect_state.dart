@@ -1,4 +1,5 @@
 import 'package:badgemagic/bademagic_module/bluetooth/datagenerator.dart';
+import 'package:badgemagic/bademagic_module/bluetooth/stream_state.dart';
 import 'package:badgemagic/bademagic_module/bluetooth/write_state.dart';
 import 'package:universal_ble/universal_ble.dart';
 import 'base_ble_state.dart';
@@ -6,8 +7,10 @@ import 'base_ble_state.dart';
 class ConnectState extends RetryBleState {
   final BleDevice scanResult;
   final DataTransferManager manager;
+  final Stream<List<int>>? frameStream;
 
-  ConnectState({required this.manager, required this.scanResult});
+  ConnectState(
+      {required this.manager, required this.scanResult, this.frameStream});
 
   @override
   Future<BleState?> processState() async {
@@ -32,12 +35,14 @@ class ConnectState extends RetryBleState {
 
         manager.connectedDevice = scanResult;
 
-        final writeState = WriteState(
-          device: scanResult,
-          manager: manager,
-        );
-
-        return await writeState.process();
+        if (frameStream != null) {
+          return await StreamState(
+                  device: scanResult, frameStream: frameStream!)
+              .process();
+        } else {
+          final writeState = WriteState(device: scanResult, manager: manager);
+          return await writeState.process();
+        }
       } else {
         throw Exception("Failed to connect to the device");
       }

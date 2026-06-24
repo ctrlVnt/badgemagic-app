@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:typed_data';
 import 'package:badgemagic/providers/badge_message_provider.dart';
 import 'package:badgemagic/providers/imageprovider.dart';
 import 'package:badgemagic/providers/speed_dial_provider.dart';
@@ -323,5 +324,36 @@ class AnimationBadgeProvider extends ChangeNotifier {
         context,
       );
     }
+  }
+
+  /// Generates the current raw 88-byte framebuffer by reading [_paintGrid].
+  /// Converts the 11x44 grid into a 16-bit Column-Major matrix (uint16_t[44]).
+  List<int> getCurrentRawFrame(String message, Converters converters) {
+    // The buffer must contain exactly 88 bytes (44 columns * 2 bytes)
+    final Uint8List frameBuffer = Uint8List(84 + 4); // 88 bytes total
+
+    int badgeWidth = _paintGrid[0].length; // Should be 44
+    int badgeHeight = _paintGrid.length; // Should be 11
+
+    // We iterate column by column (Column-Major)
+    for (int col = 0; col < badgeWidth; col++) {
+      int colValue = 0;
+
+      // We build the 16-bit value for the column by inserting the bits from top to bottom
+      for (int row = 0; row < badgeHeight; row++) {
+        if (_paintGrid[row][col]) {
+          // Set the bit corresponding to the current row
+          colValue |= (1 << row);
+        }
+      }
+
+      // We split the 16-bit value into two bytes (Little-Endian or Big-Endian format depending on the firmware)
+      // Usually compact BLE controllers expect Little-Endian (Low Byte, then High Byte):
+      int index = col * 2;
+      frameBuffer[index] = colValue & 0xFF; // Low Byte (LSB)
+      frameBuffer[index + 1] = (colValue >> 8) & 0xFF; // High Byte (MSB)
+    }
+
+    return frameBuffer.toList();
   }
 }

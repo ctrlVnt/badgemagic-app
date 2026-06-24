@@ -49,10 +49,21 @@ class ScanState extends NormalBleState {
 
             if (matchesUuid && matchesName) {
               isCompleted = true;
-              timeoutTimer?.cancel();
-              await UniversalBle.stopScan();
-              toast.showToast('Device found. Connecting...');
 
+              timeoutTimer?.cancel();
+              await subscription?.cancel();
+
+              // 1. Stop the native scan
+              try {
+                await UniversalBle.stopScan();
+              } catch (_) {}
+
+              toast.showToast('Device found. Preparing connection...');
+
+              // 2. IMPORTANT: Give Android 400-500ms to turn off the scanning hardware
+              await Future.delayed(const Duration(milliseconds: 500));
+
+              // 3. Only now switch to ConnectState
               nextStateCompleter.complete(ConnectState(
                 scanResult: device,
                 manager: manager,

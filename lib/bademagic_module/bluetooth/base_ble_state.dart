@@ -34,28 +34,33 @@ abstract class RetryBleState extends BleState {
   @override
   Future<BleState?> process() async {
     int attempt = 0;
-    Exception? lastException;
+    String lastErrorMessage = "Unknown error";
 
     while (attempt < _maxRetries) {
       try {
         return await processState();
       } on Exception catch (e) {
-        logger.e(e);
-        lastException = e;
+        // Immediately cleans the message from the "Exception: " infix
+        lastErrorMessage = e.toString().replaceFirst('Exception: ', '');
+        logger.e(
+            "Error caught on attempt ${attempt + 1}: $lastErrorMessage");
+
         attempt++;
         if (attempt < _maxRetries) {
-          logger.d("Retrying ($attempt/$_maxRetries)...");
+          logger.d(
+              "GATT clogged. Waiting for decongestion before attempt $attempt/$_maxRetries...");
+
+          // CRITICAL: 1.5 second pause allows Android to clear the command queue
+          await Future.delayed(const Duration(milliseconds: 1500));
         } else {
-          logger.e("Max retries reached. Last exception: $lastException");
-          lastException =
-              Exception("Max retries reached. Last exception: $lastException");
+          logger.e("Maximum number of attempts reached.");
+          lastErrorMessage =
+              "Connection failed after $_maxRetries attempts ($lastErrorMessage).";
         }
       }
     }
 
-    // After max retries, return a CompletedState indicating failure.
-    return CompletedState(
-        isSuccess: false,
-        message: lastException?.toString() ?? "Unknown error");
+    // After exceeding retries, returns a clean failure without crashing the app
+    return CompletedState(isSuccess: false, message: lastErrorMessage);
   }
 }

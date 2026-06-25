@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:typed_data';
+
 import 'package:badgemagic/bademagic_module/bluetooth/base_ble_state.dart';
 import 'package:badgemagic/bademagic_module/bluetooth/datagenerator.dart';
 import 'package:badgemagic/bademagic_module/utils/converters.dart';
@@ -54,6 +57,14 @@ class BadgeMessageProvider {
       GetIt.instance.get<InlineImageProvider>();
   FileHelper fileHelper = FileHelper();
   Converters converters = Converters();
+
+  bool _isHardwareUnlocked = false;
+  String? _savedPin;
+
+  void resetSessionAuth() {
+    _isHardwareUnlocked = false;
+    logger.i("🔒 Sessione di sblocco hardware resettata.");
+  }
 
   Future<Data> getBadgeData(String text, bool flash, bool marq, Speed speed,
       Mode mode, bool isInverted) async {
@@ -152,63 +163,44 @@ class BadgeMessageProvider {
       return;
     }
 
-    bool isAuthenticated = false;
+    String? currentPin;
 
-    while (!isAuthenticated) {
-      final String? enteredPin = await showPinAuthDialog(context);
+    if (_savedPin != null && _savedPin!.isNotEmpty) {
+      currentPin = _savedPin;
+    } else {
+      currentPin = await showPinAuthDialog(context);
 
-      if (enteredPin == null) {
+      if (currentPin == null) {
         ToastUtils().showToast('Transfer canceled by user');
         return;
       }
-
-      //if (enteredPin == '1234') {
-      isAuthenticated = true;
-
-      final List<String> pinHex = enteredPin.codeUnits
-          .map((char) => '0x' + char.toRadixString(16))
-          .toList();
-      Data pinData = Data(messages: [
-        Message(
-            text: pinHex,
-            mode: Mode.fixed,
-            speed: Speed.one,
-            flash: false,
-            marquee: false)
-      ]);
-      await transferData(DataTransferManager(pinData), context: context);
-
-      ToastUtils().showToast('Code verified! Transferring data...');
-      /*} else {
-        ToastUtils()
-            .showErrorToast('Incorrect security code. Please try again.');
-        await Future.delayed(const Duration(milliseconds: 500));
-      }*/
     }
 
-    Data data;
+    Data textData;
     if (jsonData != null) {
-      data = fileHelper.jsonToData(jsonData);
-      if (isSavedBadge && data.messages.isNotEmpty) {
-        final old = data.messages[0];
-        final combinedBadges =
-            data.messages.where((m) => m.text.isNotEmpty).length > 1;
-        final newMessage = Message(
-          text: old.text,
-          flash: old.flash,
-          marquee: old.marquee,
-          speed: old.speed,
-          mode: combinedBadges ? Mode.animation : old.mode,
-        );
-        data = Data(messages: [newMessage, ...data.messages.skip(1)]);
-      }
+      textData = fileHelper.jsonToData(jsonData);
     } else {
-      data = await generateData(
+      textData = await generateData(
           text, flash, marq, isInverted, speedMap[speed], mode, jsonData);
     }
 
-    DataTransferManager manager = DataTransferManager(data);
-    await transferData(manager, context: context);
+    RawDataTransferManager combinedManager = RawDataTransferManager(
+      pin: currentPin!,
+      textData: textData,
+    );
+
+    try {
+      await transferData(combinedManager, context: context);
+
+      _savedPin = currentPin;
+      _isHardwareUnlocked = true;
+
+    } catch (e) {
+      ToastUtils().showErrorToast('Transfer error: $e');
+    }
+
+    /*DataTransferManager manager = DataTransferManager(data);
+    await transferData(manager, context: context);*/
   }
 }
 

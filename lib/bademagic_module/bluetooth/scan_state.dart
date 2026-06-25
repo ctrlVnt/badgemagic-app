@@ -50,6 +50,9 @@ class ScanState extends NormalBleState {
             if (matchesUuid && matchesName) {
               isCompleted = true;
               timeoutTimer?.cancel();
+              timeoutTimer = null;
+
+              await subscription?.cancel();
               await UniversalBle.stopScan();
               toast.showToast('Device found. Connecting...');
 

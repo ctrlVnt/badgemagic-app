@@ -97,7 +97,7 @@ class BadgeMessageProvider {
     }
   }
 
-  Future<void> transferData(
+  Future<bool> transferData(
     DataTransferManager manager, {
     BuildContext? context,
   }) async {
@@ -113,13 +113,25 @@ class BadgeMessageProvider {
 
     BleState? state = initialState;
     DateTime now = DateTime.now();
+    dynamic lastState;
 
     while (state != null) {
+      lastState = state;
       state = await state.process();
     }
 
     logger.d("Time to transfer data: ${DateTime.now().difference(now)}");
     logger.d(".......Data transfer completed.......");
+
+    if (lastState != null) {
+      try {
+        if (lastState.isSuccess == false) {
+          return false;
+        }
+      } catch (_) {}
+    }
+
+    return true;
   }
 
   Future<void> checkAndTransfer(
@@ -193,13 +205,16 @@ class BadgeMessageProvider {
         textData: textData,
       );
 
-      try {
-        await transferData(combinedManager, context: context);
-
+      bool success = await transferData(combinedManager, context: context);
+      if (success) {
         savedPin = currentPin;
         isHardwareUnlocked = true;
-      } catch (e) {
-        ToastUtils().showErrorToast('Transfer error: $e');
+        ToastUtils().showToast('Data transferred successfully!');
+      } else {
+        savedPin = null;
+        isHardwareUnlocked = false;
+
+        await Future.delayed(const Duration(milliseconds: 1000));
       }
     } else {
       Data data;

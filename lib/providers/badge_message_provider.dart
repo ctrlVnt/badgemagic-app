@@ -15,6 +15,7 @@ import 'package:badgemagic/providers/imageprovider.dart';
 import 'package:badgemagic/services/localization_service.dart';
 import 'package:flutter/material.dart';
 import 'package:badgemagic/utils/custom_transfers/transfers.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:universal_ble/universal_ble.dart';
 import 'package:get_it/get_it.dart';
 import 'package:logger/logger.dart';
@@ -162,43 +163,69 @@ class BadgeMessageProvider {
       return;
     }
 
-    String? currentPin;
+    final prefs = await SharedPreferences.getInstance();
+    bool usePin = prefs.getBool('secure_connection_pin') ?? false;
 
-    if (savedPin != null && savedPin!.isNotEmpty) {
-      currentPin = savedPin;
-    } else {
-      currentPin = await showPinAuthDialog(context);
+    if (usePin) {
+      String? currentPin;
 
-      if (currentPin == null) {
-        ToastUtils().showToast('Transfer canceled by user');
-        return;
+      if (savedPin != null && savedPin!.isNotEmpty) {
+        currentPin = savedPin;
+      } else {
+        currentPin = await showPinAuthDialog(context);
+
+        if (currentPin == null) {
+          ToastUtils().showToast('Transfer canceled by user');
+          return;
+        }
       }
-    }
 
-    Data textData;
-    if (jsonData != null) {
-      textData = fileHelper.jsonToData(jsonData);
+      Data textData;
+      if (jsonData != null) {
+        textData = fileHelper.jsonToData(jsonData);
+      } else {
+        textData = await generateData(
+            text, flash, marq, isInverted, speedMap[speed], mode, jsonData);
+      }
+
+      RawDataTransferManager combinedManager = RawDataTransferManager(
+        pin: currentPin!,
+        textData: textData,
+      );
+
+      try {
+        await transferData(combinedManager, context: context);
+
+        savedPin = currentPin;
+        isHardwareUnlocked = true;
+      } catch (e) {
+        ToastUtils().showErrorToast('Transfer error: $e');
+      }
     } else {
-      textData = await generateData(
-          text, flash, marq, isInverted, speedMap[speed], mode, jsonData);
+      Data data;
+      if (jsonData != null) {
+        data = fileHelper.jsonToData(jsonData);
+        if (isSavedBadge && data.messages.isNotEmpty) {
+          final old = data.messages[0];
+          final combinedBadges =
+              data.messages.where((m) => m.text.isNotEmpty).length > 1;
+          final newMessage = Message(
+            text: old.text,
+            flash: old.flash,
+            marquee: old.marquee,
+            speed: old.speed,
+            mode: combinedBadges ? Mode.animation : old.mode,
+          );
+          data = Data(messages: [newMessage, ...data.messages.skip(1)]);
+        }
+      } else {
+        data = await generateData(
+            text, flash, marq, isInverted, speedMap[speed], mode, jsonData);
+      }
+
+      DataTransferManager manager = DataTransferManager(data);
+      await transferData(manager, context: context);
     }
-
-    RawDataTransferManager combinedManager = RawDataTransferManager(
-      pin: currentPin!,
-      textData: textData,
-    );
-
-    try {
-      await transferData(combinedManager, context: context);
-
-      savedPin = currentPin;
-      isHardwareUnlocked = true;
-    } catch (e) {
-      ToastUtils().showErrorToast('Transfer error: $e');
-    }
-
-    /*DataTransferManager manager = DataTransferManager(data);
-    await transferData(manager, context: context);*/
   }
 }
 

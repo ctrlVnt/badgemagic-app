@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:get_it/get_it.dart';
 import 'package:badgemagic/services/localization_service.dart';
 import 'package:badgemagic/main.dart';
+import 'package:shared_preferences/shared_preferences.dart'; // 🟢 Import per SharedPreferences
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -23,10 +24,13 @@ class SettingsScreenState extends State<SettingsScreen> {
   late List<TextEditingController> _controllers;
   bool _initialized = false;
 
+  bool _isSecureConnectionEnabled = false;
+
   @override
   void initState() {
     super.initState();
     _setOrientation();
+    _loadSecureConnectionSetting();
   }
 
   void _setOrientation() {
@@ -34,6 +38,14 @@ class SettingsScreenState extends State<SettingsScreen> {
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
     ]);
+  }
+
+  Future<void> _loadSecureConnectionSetting() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _isSecureConnectionEnabled =
+          prefs.getBool('secure_connection_pin') ?? false;
+    });
   }
 
   @override
@@ -112,7 +124,61 @@ class SettingsScreenState extends State<SettingsScreen> {
                   ),
                 ),
                 const SizedBox(height: 24),
-                Text(l10n.badgeScanMode,
+                Row(
+                  children: [
+                    Text(
+                      l10n.secureConnection,
+                      style: const TextStyle(
+                          fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(width: 4),
+                    IconButton(
+                      icon: const Icon(Icons.info_outline,
+                          size: 20, color: colorPrimary),
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(),
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            title: Row(
+                              children: [
+                                const Icon(Icons.lock_outline,
+                                    color: colorPrimary),
+                                const SizedBox(width: 8),
+                                Text(l10n.pinInformation),
+                              ],
+                            ),
+                            content: Text(
+                              l10n.pinInformationMessage,
+                            ),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.pop(context),
+                                child: Text(l10n.iUnderstand),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 4),
+                SwitchListTile(
+                  title: Text(l10n.requestPinBeforeSending),
+                  subtitle: Text(l10n.secureConnectionDescription),
+                  value: _isSecureConnectionEnabled,
+                  activeColor: colorPrimary,
+                  contentPadding: EdgeInsets.zero,
+                  onChanged: (bool value) {
+                    setState(() {
+                      _isSecureConnectionEnabled = value;
+                    });
+                  },
+                ),
+                const SizedBox(height: 24),
+                Text(provider.isLoaded ? l10n.badgeScanMode : '',
                     style: const TextStyle(
                         fontSize: 16, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 8),
@@ -129,7 +195,6 @@ class SettingsScreenState extends State<SettingsScreen> {
                   onChanged: (value) => setState(() => _scanMode = value!),
                 ),
                 if (_scanMode == BadgeScanMode.specific) ...[
-                  // Selection controls row
                   if (_controllers.isNotEmpty)
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -152,7 +217,6 @@ class SettingsScreenState extends State<SettingsScreen> {
                             ElevatedButton.icon(
                               onPressed: () {
                                 provider.removeSelectedDevices();
-                                // Update controllers after removal
                                 setState(() {
                                   for (final controller in _controllers) {
                                     controller.dispose();
@@ -169,6 +233,8 @@ class SettingsScreenState extends State<SettingsScreen> {
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.red,
                                 foregroundColor: Colors.white,
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 12, vertical: 8),
                               ),
                             ),
                         ],
@@ -185,13 +251,11 @@ class SettingsScreenState extends State<SettingsScreen> {
                       decoration: BoxDecoration(
                         border: Border.all(
                           color:
-                              isSelected ? Colors.blue : Colors.grey.shade300,
+                              isSelected ? colorPrimary : Colors.grey.shade300,
                           width: isSelected ? 2 : 1,
                         ),
                         borderRadius: BorderRadius.circular(8),
-                        color: isSelected
-                            ? Colors.blue.shade50
-                            : Colors.transparent,
+                        color: isSelected ? colorPrimary : Colors.transparent,
                       ),
                       child: Row(
                         children: [
@@ -199,7 +263,7 @@ class SettingsScreenState extends State<SettingsScreen> {
                             value: isSelected,
                             onChanged: (value) =>
                                 provider.toggleSelection(index),
-                            activeColor: Colors.blue,
+                            activeColor: colorPrimary,
                           ),
                           Expanded(
                             child: Padding(
@@ -210,7 +274,7 @@ class SettingsScreenState extends State<SettingsScreen> {
                                   hintText: l10n.badgeNameHint,
                                   border: InputBorder.none,
                                   contentPadding:
-                                      EdgeInsets.symmetric(vertical: 12),
+                                      const EdgeInsets.symmetric(vertical: 12),
                                 ),
                                 onChanged: (value) {
                                   // Update the provider when text changes
@@ -236,14 +300,21 @@ class SettingsScreenState extends State<SettingsScreen> {
                 const SizedBox(height: 24),
                 Center(
                   child: GestureDetector(
-                    onTap: () {
+                    onTap: () async {
+                      final prefs = await SharedPreferences.getInstance();
+                      await prefs.setBool(
+                          'secure_connection_pin', _isSecureConnectionEnabled);
+
                       provider.setMode(_scanMode);
                       provider.setBadgeNames(
                         _controllers.map((c) => c.text.trim()).toList(),
                       );
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(l10n.scanSettingsSaved)),
-                      );
+
+                      if (mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(l10n.scanSettingsSaved)),
+                        );
+                      }
                     },
                     child: Container(
                       padding: const EdgeInsets.symmetric(
@@ -268,35 +339,4 @@ class SettingsScreenState extends State<SettingsScreen> {
       },
     );
   }
-
-//   Widget _buildDropdown({
-//     required String selectedValue,
-//     required List<String> values,
-//     required Function(String) onChanged,
-//   }) {
-//     return Container(
-//       decoration: BoxDecoration(
-//         color: Colors.white,
-//         borderRadius: BorderRadius.circular(8),
-//       ),
-//       padding: const EdgeInsets.symmetric(horizontal: 12),
-//       child: DropdownButtonHideUnderline(
-//         child: DropdownButton<String>(
-//           value: selectedValue,
-//           isExpanded: true,
-//           icon: const Icon(Icons.arrow_drop_down, color: Colors.grey),
-//           onChanged: (String? newValue) {
-//             if (newValue != null) onChanged(newValue);
-//           },
-//           items: values.map<DropdownMenuItem<String>>((String value) {
-//             return DropdownMenuItem<String>(
-//               value: value,
-//               child: Text(value, style: const TextStyle(color: Colors.black)),
-//             );
-//           }).toList(),
-//         ),
-//       ),
-//     );
-//   }
-// }
 }

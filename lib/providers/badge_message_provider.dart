@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:typed_data';
 
 import 'package:badgemagic/bademagic_module/bluetooth/base_ble_state.dart';
 import 'package:badgemagic/bademagic_module/bluetooth/datagenerator.dart';
@@ -58,11 +57,11 @@ class BadgeMessageProvider {
   FileHelper fileHelper = FileHelper();
   Converters converters = Converters();
 
-  bool _isHardwareUnlocked = false;
-  String? _savedPin;
+  bool isHardwareUnlocked = false;
+  String? savedPin;
 
   void resetSessionAuth() {
-    _isHardwareUnlocked = false;
+    isHardwareUnlocked = false;
     logger.i("🔒 Sessione di sblocco hardware resettata.");
   }
 
@@ -165,8 +164,8 @@ class BadgeMessageProvider {
 
     String? currentPin;
 
-    if (_savedPin != null && _savedPin!.isNotEmpty) {
-      currentPin = _savedPin;
+    if (savedPin != null && savedPin!.isNotEmpty) {
+      currentPin = savedPin;
     } else {
       currentPin = await showPinAuthDialog(context);
 
@@ -192,8 +191,8 @@ class BadgeMessageProvider {
     try {
       await transferData(combinedManager, context: context);
 
-      _savedPin = currentPin;
-      _isHardwareUnlocked = true;
+      savedPin = currentPin;
+      isHardwareUnlocked = true;
 
     } catch (e) {
       ToastUtils().showErrorToast('Transfer error: $e');

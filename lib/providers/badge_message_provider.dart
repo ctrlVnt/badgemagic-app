@@ -193,7 +193,6 @@ class BadgeMessageProvider {
 
       savedPin = currentPin;
       isHardwareUnlocked = true;
-
     } catch (e) {
       ToastUtils().showErrorToast('Transfer error: $e');
     }

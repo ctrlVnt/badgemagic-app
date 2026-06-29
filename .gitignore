@@ -62,3 +62,6 @@ untranslated.json
 
 # FVM Version Cache
 .fvm/
+
+#vscode folder
+.vscode/

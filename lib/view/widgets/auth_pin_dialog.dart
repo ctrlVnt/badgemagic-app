@@ -58,8 +58,8 @@ Future<String?> showPinAuthDialog(BuildContext context) async {
             child: const Text('Cancel', style: TextStyle(color: Colors.grey)),
             onPressed: () => Navigator.of(context).pop(null),
           ),
-          ElevatedButton(
-            child: const Text('Verify & Send'),
+          TextButton(
+            child: const Text('Send'),
             onPressed: () {
               if (formKey.currentState!.validate()) {
                 Navigator.of(context).pop(pinController.text);

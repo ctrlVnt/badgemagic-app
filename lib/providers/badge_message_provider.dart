@@ -63,7 +63,6 @@ class BadgeMessageProvider {
 
   void resetSessionAuth() {
     isHardwareUnlocked = false;
-    logger.i("🔒 Sessione di sblocco hardware resettata.");
   }
 
   Future<Data> getBadgeData(String text, bool flash, bool marq, Speed speed,
@@ -179,42 +178,47 @@ class BadgeMessageProvider {
     bool usePin = prefs.getBool('secure_connection_pin') ?? false;
 
     if (usePin) {
-      String? currentPin;
+      bool isTransferred = false;
+      while (!isTransferred) {
+        String? currentPin;
 
-      if (savedPin != null && savedPin!.isNotEmpty) {
-        currentPin = savedPin;
-      } else {
-        currentPin = await showPinAuthDialog(context);
+        if (savedPin != null && savedPin!.isNotEmpty) {
+          currentPin = savedPin;
+        } else {
+          currentPin = await showPinAuthDialog(context);
 
-        if (currentPin == null) {
-          ToastUtils().showToast('Transfer canceled by user');
-          return;
+          if (currentPin == null) {
+            ToastUtils().showToast('Transfer canceled by user');
+            return;
+          }
         }
-      }
 
-      Data textData;
-      if (jsonData != null) {
-        textData = fileHelper.jsonToData(jsonData);
-      } else {
-        textData = await generateData(
-            text, flash, marq, isInverted, speedMap[speed], mode, jsonData);
-      }
+        Data textData;
+        if (jsonData != null) {
+          textData = fileHelper.jsonToData(jsonData);
+        } else {
+          textData = await generateData(
+              text, flash, marq, isInverted, speedMap[speed], mode, jsonData);
+        }
 
-      RawDataTransferManager combinedManager = RawDataTransferManager(
-        pin: currentPin!,
-        textData: textData,
-      );
+        RawDataTransferManager combinedManager = RawDataTransferManager(
+          pin: currentPin!,
+          textData: textData,
+        );
 
-      bool success = await transferData(combinedManager, context: context);
-      if (success) {
-        savedPin = currentPin;
-        isHardwareUnlocked = true;
-        ToastUtils().showToast('Data transferred successfully!');
-      } else {
-        savedPin = null;
-        isHardwareUnlocked = false;
+        bool success = await transferData(combinedManager, context: context);
 
-        await Future.delayed(const Duration(milliseconds: 1000));
+        if (success) {
+          savedPin = currentPin;
+          isHardwareUnlocked = true;
+          isTransferred = true;
+          ToastUtils().showToast('Data transferred successfully!');
+        } else {
+          savedPin = null;
+          isHardwareUnlocked = false;
+
+          await Future.delayed(const Duration(milliseconds: 1500));
+        }
       }
     } else {
       Data data;

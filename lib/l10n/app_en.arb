@@ -216,10 +216,10 @@
   "pleaseSelectClipart": "Please draw or select a clipart before saving",
   "secureConnection": "Secure Connection (PIN)",
   "pinInformation": "PIN Information",
-  "pinInformationMessage": "Activating this option the app will request a PIN code before each transfer.\n\n⚠️ NOTE: To work correctly, this setting must also be activated on the Badge Magic firmware (DOWNLOAD mode with on-screen code).",
+  "pinInformationMessage": "Activating this option the app will request a PIN code before each transfer.\n\n⚠️ NOTE: To activate this feature, you need to go to the badge menu > Security > Enable.",
   "iUnderstand": "I understand",
   "requestPinBeforeSending": "Request PIN before sending",
-  "secureConnectionDescription": "Increases security by preventing unauthorized transfers"
+  "secureConnectionDescription": "Increases security by preventing unauthorized transfers",
   "importFromFile": "Import from file",
   "scanQrCode": "Scan QR code",
   "couldNotImportBadgeFromQr": "Could not import badge from QR code.",

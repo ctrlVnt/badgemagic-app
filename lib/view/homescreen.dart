@@ -243,42 +243,6 @@ class _HomeScreenState extends State<HomeScreen>
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         AnimationBadge(),
-                        Consumer<SpeedDialProvider>(
-                          builder: (context, speedProvider, _) {
-                            double currentSpeed =
-                                speedProvider.getOuterValue().toDouble();
-                            return Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Padding(
-                                  padding:
-                                      EdgeInsets.symmetric(horizontal: 20.w),
-                                  child: Slider(
-                                    value: currentSpeed,
-                                    min: 1.0,
-                                    max: 8.0,
-                                    divisions: 7,
-                                    label: currentSpeed.round().toString(),
-                                    activeColor: colorPrimary,
-                                    inactiveColor: dividerColor,
-                                    onChanged: (double newValue) {
-                                      speedProvider
-                                          .setDialValue(newValue.round());
-                                    },
-                                  ),
-                                ),
-                                Text(
-                                  "${l10n.speed}: ${currentSpeed.round()}",
-                                  style: TextStyle(
-                                    fontSize: 12.sp,
-                                    fontWeight: FontWeight.w500,
-                                    color: mdGrey400,
-                                  ),
-                                ),
-                              ],
-                            );
-                          },
-                        ),
                         Padding(
                           padding: EdgeInsets.symmetric(
                               horizontal: 15.w, vertical: 12.h),
@@ -493,6 +457,56 @@ class _HomeScreenState extends State<HomeScreen>
                               ),
                             ),
                           ),
+                        ),
+                        Consumer<SpeedDialProvider>(
+                          builder: (context, speedProvider, _) {
+                            double currentSpeed =
+                                speedProvider.getOuterValue().toDouble();
+                            return Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    SizedBox(
+                                      height: 20,
+                                    ),
+                                    Text(
+                                      "${l10n.speed}: ",
+                                      style: TextStyle(
+                                        fontSize: 12.sp,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                    Text(
+                                      "${currentSpeed.round()}",
+                                      style: TextStyle(
+                                          fontSize: 12.sp,
+                                          fontWeight: FontWeight.w700,
+                                          color: colorPrimary),
+                                    ),
+                                  ],
+                                ),
+                                Padding(
+                                  padding:
+                                      EdgeInsets.symmetric(horizontal: 20.w),
+                                  child: Slider(
+                                    value: currentSpeed,
+                                    min: 1.0,
+                                    max: 8.0,
+                                    divisions: 7,
+                                    label: currentSpeed.round().toString(),
+                                    activeColor: colorPrimary,
+                                    inactiveColor: dividerColor,
+                                    onChanged: (double newValue) {
+                                      speedProvider
+                                          .setDialValue(newValue.round());
+                                    },
+                                  ),
+                                ),
+                              ],
+                            );
+                          },
                         ),
                         AnimatedSize(
                           duration: const Duration(milliseconds: 300),

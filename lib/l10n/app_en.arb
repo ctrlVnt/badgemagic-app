@@ -216,7 +216,7 @@
   "pleaseSelectClipart": "Please draw or select a clipart before saving",
   "secureConnection": "Secure Connection (PIN)",
   "pinInformation": "PIN Information",
-  "pinInformationMessage": "Activating this option the app will request a PIN code before each transfer.\n\n⚠️ NOTE: To activate this feature, you need to go to the badge menu > Security > Enable.",
+  "pinInformationMessage": "Activating this option the app will request a PIN code before each transfer.\n\nNOTE: This feature is compatible only with badgemagic-firmware. You must first activate the security option directly on the badge.",
   "iUnderstand": "I understand",
   "requestPinBeforeSending": "Request PIN before sending",
   "secureConnectionDescription": "Increases security by preventing unauthorized transfers",

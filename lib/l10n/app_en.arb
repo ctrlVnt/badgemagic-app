@@ -226,4 +226,23 @@
   "transferSucceeded": "Data transferred successfully",
   "noBLEServiceFound": "Required BLE service not found on device",
   "unknownError": "Unknown Error"
+  "importFromFile": "Import from file",
+  "scanQrCode": "Scan QR code",
+  "couldNotImportBadgeFromQr": "Could not import badge from QR code.",
+  "shareAsFile": "Share as file",
+  "shareViaQrCode": "Share via QR code",
+  "scanBadgeQrCode": "Scan badge QR code",
+  "toggleTorch": "Toggle torch",
+  "switchCamera": "Switch camera",
+  "scanQrInstruction": "Point the camera at a badge QR code shared from another device.",
+  "importFromImage": "Import from image",
+  "couldNotReadBadgeQr": "Could not read this badge QR code.",
+  "noBadgeQrInImage": "No badge QR code found in that image.",
+  "couldNotReadQrFromImage": "Could not read QR code from that image.",
+  "badgeTooLargeForQr": "This badge is too large to share as a QR code. Use file sharing instead.",
+  "shareBadgeQrCode": "Share badge QR code",
+  "shareQrImage": "Share QR image",
+  "couldNotGenerateQrImage": "Could not generate QR image.",
+  "couldNotShareQrImage": "Could not share QR image.",
+  "qrShareInstruction": "Scan this code from another device, or tap share to send the QR image."
 }

@@ -225,7 +225,7 @@
   "transferAborted": "Transfer aborted",
   "transferSucceeded": "Data transferred successfully",
   "noBLEServiceFound": "Required BLE service not found on device",
-  "unknownError": "Unknown Error"
+  "unknownError": "Unknown Error",
   "importFromFile": "Import from file",
   "scanQrCode": "Scan QR code",
   "couldNotImportBadgeFromQr": "Could not import badge from QR code.",

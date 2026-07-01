@@ -6,6 +6,7 @@ import 'package:badgemagic/bademagic_module/utils/toast_utils.dart';
 import 'package:badgemagic/constants.dart';
 import 'package:badgemagic/services/localization_service.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get_it/get_it.dart';
 import 'package:badgemagic/providers/draw_badge_provider.dart';
 import 'package:badgemagic/view/widgets/common_scaffold_widget.dart';
@@ -219,7 +220,7 @@ class _DrawBadgeState extends State<DrawBadge> {
               if (_showShapeOptions)
                 Container(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 128, vertical: 4),
+                      EdgeInsets.symmetric(horizontal: 40.w, vertical: 4.h),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [

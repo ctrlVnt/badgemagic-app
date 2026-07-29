@@ -11,6 +11,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+import '../providers/image_converter_provider.dart';
+
 class DrawBadge extends StatefulWidget {
   final String? filename;
   final bool? isSavedCard;
@@ -176,6 +178,8 @@ class _DrawBadgeState extends State<DrawBadge> {
                           Flexible(child: _buildSaveButton(fileHelper)),
                           const SizedBox(width: 2),
                           Flexible(child: _buildShapesToggleButton()),
+                          const SizedBox(width: 2),
+                          Flexible(child: _buildImportImageButton()),
                           const SizedBox(width: 2),
                           Flexible(child: _buildUndoButton()),
                           const SizedBox(width: 2),
@@ -445,6 +449,36 @@ class _DrawBadgeState extends State<DrawBadge> {
           ),
         );
       },
+    );
+  }
+
+  Widget _buildImportImageButton() {
+    return TextButton(
+      onPressed: () async {
+        List<List<bool>>? convertedGrid =
+        await ImageToBadgeConverter.pickAndConvertImage();
+
+        if (convertedGrid != null) {
+          setState(() {
+            // Carica la griglia nell'editor e salva lo stato nello stack Undo
+            drawToggle.updateDrawViewGrid(convertedGrid);
+          });
+
+          ToastUtils().showToast('Immagine importata con successo!');
+        }
+      },
+      style: TextButton.styleFrom(
+        padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 12),
+        minimumSize: const Size(60, 40),
+      ),
+      child: const Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.image, color: Colors.black, size: 20),
+          SizedBox(height: 2),
+          Text('Importa', style: TextStyle(color: Colors.black, fontSize: 10)),
+        ],
+      ),
     );
   }
 

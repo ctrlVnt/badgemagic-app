@@ -67,7 +67,7 @@ class BadgeTextInputField extends StatelessWidget {
       padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 8.h),
       child: Material(
         color: drawerHeaderTitle,
-        borderRadius: BorderRadius.circular(10.r),
+        borderRadius: BorderRadius.circular(12.r),
         elevation: 4,
         child: ExtendedTextField(
           inputFormatters: [
@@ -131,7 +131,7 @@ class BadgeTextInputField extends StatelessWidget {
                       ),
                       shape: WidgetStatePropertyAll(
                         RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16.r),
+                          borderRadius: BorderRadius.circular(12.r),
                         ),
                       ),
                     ),
@@ -169,7 +169,7 @@ class BadgeTextInputField extends StatelessWidget {
                     }).toList(),
                     builder: (context, controller, child) {
                       return InkWell(
-                        borderRadius: BorderRadius.circular(8.r),
+                        borderRadius: BorderRadius.circular(12.r),
                         onTap: () {
                           FocusScope.of(context).unfocus();
                           controller.isOpen

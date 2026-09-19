@@ -43,7 +43,7 @@ class SavedClipartListView extends StatelessWidget {
           height: 90.h,
           decoration: BoxDecoration(
             color: colorSurface,
-            borderRadius: BorderRadius.circular(15.dg),
+            borderRadius: BorderRadius.circular(12.r),
             boxShadow: [
               BoxShadow(
                 color: colorShadow.withValues(alpha: 0.5),

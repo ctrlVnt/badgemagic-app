@@ -174,7 +174,7 @@ class _VectorGridViewState extends State<VectorGridView> {
                 },
                 child: Card(
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(5),
+                    borderRadius: BorderRadius.circular(12),
                   ),
                   surfaceTintColor: colorSurface,
                   color: colorSurface,
@@ -206,7 +206,7 @@ class _VectorGridViewState extends State<VectorGridView> {
               },
               child: Card(
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(5),
+                  borderRadius: BorderRadius.circular(12),
                   side: isSelected
                       ? BorderSide(color: colorTextSecondary, width: 2)
                       : BorderSide.none,

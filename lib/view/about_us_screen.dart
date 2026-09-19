@@ -42,7 +42,7 @@ class _AboutUsScreenState extends State<AboutUsScreen> {
               Container(
                 decoration: BoxDecoration(
                   color: colorSurface,
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(12),
                   boxShadow: const [
                     BoxShadow(
                       color: colorShadow,
@@ -124,7 +124,7 @@ class _AboutUsScreenState extends State<AboutUsScreen> {
                       offset: Offset(0, 1),
                     )
                   ],
-                  borderRadius: BorderRadius.circular(6),
+                  borderRadius: BorderRadius.circular(12),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -180,7 +180,7 @@ class _AboutUsScreenState extends State<AboutUsScreen> {
                       offset: Offset(0, 1),
                     )
                   ],
-                  borderRadius: BorderRadius.circular(6),
+                  borderRadius: BorderRadius.circular(12),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,

@@ -33,7 +33,7 @@ class ToastUtils {
         backgroundColor: Colors.white,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(12),
         ),
         dismissDirection: DismissDirection.startToEnd,
       ),

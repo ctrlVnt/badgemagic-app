@@ -159,7 +159,7 @@ class _BadgeScanSettingsWidgetState extends State<BadgeScanSettingsWidget> {
                             color: isSelected ? colorSelected : colorBorder,
                             width: isSelected ? 2 : 1,
                           ),
-                          borderRadius: BorderRadius.circular(8),
+                          borderRadius: BorderRadius.circular(12),
                           color: isSelected
                               ? colorSelectedSurface
                               : colorTransparent,

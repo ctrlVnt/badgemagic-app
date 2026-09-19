@@ -298,13 +298,8 @@ class SettingsScreenState extends State<SettingsScreen> {
                 ),
                 const SizedBox(height: 24),
                 if (Platform.isLinux)
-                  Card(
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      side: BorderSide(color: Colors.grey.shade300),
-                    ),
-                    child: const ListTile(
+                  const Card(
+                    child: ListTile(
                       title: Text(
                         "Enable USB Transfers",
                         style: TextStyle(
@@ -320,11 +315,6 @@ class SettingsScreenState extends State<SettingsScreen> {
                   )
                 else
                   Card(
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      side: BorderSide(color: Colors.grey.shade300),
-                    ),
                     child: SwitchListTile(
                       title: const Text(
                         "Enable USB Transfers",
@@ -436,7 +426,7 @@ class SettingsScreenState extends State<SettingsScreen> {
                           color: isSelected ? colorSelected : colorBorder,
                           width: isSelected ? 2 : 1,
                         ),
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: BorderRadius.circular(12),
                         color: isSelected
                             ? colorSelectedSurface
                             : colorTransparent,
@@ -523,7 +513,7 @@ class SettingsScreenState extends State<SettingsScreen> {
                     decoration: BoxDecoration(
                       color: Colors.red.shade50,
                       border: Border.all(color: Colors.red.shade200),
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(12),
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -635,7 +625,7 @@ class SettingsScreenState extends State<SettingsScreen> {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 40, vertical: 10),
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(4),
+                        borderRadius: BorderRadius.circular(12),
                         color: mdGrey400,
                       ),
                       child: Text(

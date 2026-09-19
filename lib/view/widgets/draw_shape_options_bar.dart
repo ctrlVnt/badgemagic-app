@@ -80,7 +80,7 @@ class DrawShapeOptionsBar extends StatelessWidget {
         backgroundColor: isSelected ? colorPrimary : colorSurface,
         elevation: isSelected ? 2 : 1,
         side: BorderSide(color: isSelected ? colorPrimary : colorBorder),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
         minimumSize: const Size(55, 40),
       ),

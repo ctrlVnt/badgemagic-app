@@ -329,7 +329,7 @@ class _HomeScreenState extends State<HomeScreen>
             padding: EdgeInsets.symmetric(vertical: 6.h),
             decoration: BoxDecoration(
               color: selected ? colorPrimary : Colors.transparent,
-              borderRadius: BorderRadius.circular(20.r),
+              borderRadius: BorderRadius.circular(12.r),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -356,7 +356,7 @@ class _HomeScreenState extends State<HomeScreen>
       padding: EdgeInsets.all(3.w),
       decoration: BoxDecoration(
         color: Colors.grey[100],
-        borderRadius: BorderRadius.circular(20.r),
+        borderRadius: BorderRadius.circular(12.r),
       ),
       child: Row(
         children: [
@@ -445,7 +445,7 @@ class _HomeScreenState extends State<HomeScreen>
                       child: Container(
                         height: isPrefixIconClicked ? 225.h : 0,
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10.r),
+                          borderRadius: BorderRadius.circular(12.r),
                           color: colorSurfaceMuted,
                         ),
                         margin: EdgeInsets.symmetric(
@@ -774,7 +774,7 @@ class _HomeScreenState extends State<HomeScreen>
       backgroundColor: Colors.white,
       isScrollControlled: true,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(12.r)),
       ),
       builder: (bottomSheetContext) {
         return SafeArea(

@@ -98,7 +98,7 @@ class _GifTile extends StatelessWidget {
       onTap: onTap,
       child: Card(
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(5),
+          borderRadius: BorderRadius.circular(12),
           side: BorderSide(
             color: isSelected ? colorPrimary : Colors.transparent,
             width: isSelected ? 1.5 : 0,

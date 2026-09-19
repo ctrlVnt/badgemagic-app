@@ -80,11 +80,7 @@ void showLicenseDialog(BuildContext context) {
     context: context,
     builder: (BuildContext context) {
       return Dialog(
-        insetPadding: EdgeInsets.all(8),
-        backgroundColor: colorSurface,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8.0),
-        ),
+        insetPadding: const EdgeInsets.all(8),
         child: Container(
           constraints: BoxConstraints(maxHeight: 500.h),
           child: Column(
@@ -217,10 +213,7 @@ void showLicenseDialog(BuildContext context) {
                 alignment: Alignment.centerRight,
                 child: TextButton(
                   onPressed: () => Navigator.of(context).pop(),
-                  child: const Text(
-                    'CLOSE',
-                    style: TextStyle(color: colorError),
-                  ),
+                  child: const Text('CLOSE'),
                 ),
               ),
             ],

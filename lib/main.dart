@@ -8,6 +8,7 @@ import 'package:badgemagic/providers/service_locator.dart';
 import 'package:badgemagic/providers/inline_image_provider.dart';
 import 'package:badgemagic/providers/speed_dial_provider.dart';
 import 'package:badgemagic/providers/usb_transfer_provider.dart';
+import 'package:badgemagic/theme/app_theme.dart';
 import 'package:badgemagic/view/about_us_screen.dart';
 import 'package:badgemagic/view/draw_badge_screen.dart';
 import 'package:badgemagic/view/home_screen.dart';
@@ -111,32 +112,7 @@ class MyApp extends StatelessWidget {
             return MaterialApp(
               scaffoldMessengerKey: globals.scaffoldMessengerKey,
               debugShowCheckedModeBanner: false,
-              theme: ThemeData(
-                colorSchemeSeed: colorSurface,
-                useMaterial3: true,
-                dialogTheme: DialogThemeData(
-                  backgroundColor: colorSurface,
-                  surfaceTintColor: colorTransparent,
-                  elevation: 0,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(28.0),
-                  ),
-                  actionsPadding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  titleTextStyle: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                    color: colorOnSurface,
-                  ),
-                ),
-                textButtonTheme: TextButtonThemeData(
-                  style: TextButton.styleFrom(
-                    foregroundColor: colorError,
-                    textStyle: const TextStyle(fontWeight: FontWeight.bold),
-                    padding: const EdgeInsets.all(15),
-                  ),
-                ),
-              ),
+              theme: AppTheme.lightTheme,
               locale: locale ?? const Locale('en', 'US'),
               localizationsDelegates: const [
                 AppLocalizations.delegate,

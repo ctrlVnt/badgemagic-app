@@ -38,9 +38,6 @@ class SaveBadgeDialog extends StatelessWidget {
       extentOffset: badgeNameController.text.length,
     );
     return Dialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(5.r),
-      ),
       child: Container(
         height: 180.h,
         width: 300.w,
@@ -63,7 +60,6 @@ class SaveBadgeDialog extends StatelessWidget {
               l10n.badgeName,
               style: const TextStyle(
                 fontWeight: FontWeight.w400,
-                color: colorError,
               ),
             ),
             const SizedBox(height: 10),
@@ -71,14 +67,7 @@ class SaveBadgeDialog extends StatelessWidget {
               controller: badgeNameController,
               autofocus: true,
               maxLength: 200,
-              decoration: const InputDecoration(
-                enabledBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: colorError),
-                ),
-                focusedBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: colorError, width: 2),
-                ),
-              ),
+              decoration: const InputDecoration(),
               buildCounter: (context,
                   {required currentLength, required isFocused, maxLength}) {
                 return Align(
@@ -102,7 +91,6 @@ class SaveBadgeDialog extends StatelessWidget {
                     },
                     child: Text(
                       l10n.cancel,
-                      style: const TextStyle(color: colorError),
                     )),
                 TextButton(
                   onPressed: () async {
@@ -263,10 +251,7 @@ class SaveBadgeDialog extends StatelessWidget {
                       }
                     }
                   },
-                  child: Text(
-                    'Save',
-                    style: const TextStyle(color: colorError),
-                  ),
+                  child: const Text('Save'),
                 ),
               ],
             )

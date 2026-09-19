@@ -237,20 +237,12 @@ class _FirmwareUpdateDialogState extends State<FirmwareUpdateDialog> {
           ),
           if (Platform.isAndroid || Platform.isLinux) ...[
             ElevatedButton.icon(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red,
-                foregroundColor: Colors.white,
-              ),
               icon: const Icon(Icons.usb, size: 18),
               onPressed: _startUsbFlash,
               label: Text(l10n.flashViaUsb),
             ),
           ] else ...[
             ElevatedButton.icon(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red,
-                foregroundColor: Colors.white,
-              ),
               icon: const Icon(Icons.usb, size: 18),
               onPressed: () =>
                   openUrl('https://github.com/fossasia/badgemagic-firmware'),

@@ -170,7 +170,6 @@ class _BadgeScanSettingsWidgetState extends State<BadgeScanSettingsWidget> {
                               value: isSelected,
                               onChanged: (value) =>
                                   provider.toggleSelection(index),
-                              activeColor: colorSelected,
                             ),
                             Expanded(
                               child: Padding(

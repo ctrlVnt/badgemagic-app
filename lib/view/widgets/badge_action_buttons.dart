@@ -27,19 +27,6 @@ class BadgeActionButtons extends StatelessWidget {
       height: height,
       child: FilledButton.tonal(
         onPressed: onTap,
-        style: FilledButton.styleFrom(
-          backgroundColor: colorSurfaceMuted,
-          foregroundColor: colorTextStrong,
-          elevation: 0,
-          textStyle: TextStyle(
-            fontSize: 14.sp,
-            fontWeight: FontWeight.w600,
-            letterSpacing: 0.3,
-          ),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(14.r),
-          ),
-        ),
         child: Text(label),
       ),
     );

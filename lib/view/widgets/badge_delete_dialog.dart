@@ -13,9 +13,6 @@ class DeleteBadgeDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = GetIt.instance.get<LocalizationService>().l10n;
     return Dialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(5.r),
-      ),
       child: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.all(16.w),
@@ -25,7 +22,7 @@ class DeleteBadgeDialog extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  Icon(Icons.delete, color: colorOnSurface),
+                  const Icon(Icons.delete, color: colorOnSurface),
                   SizedBox(width: 10.w),
                   Text(l10n.delete,
                       style: TextStyle(
@@ -45,14 +42,12 @@ class DeleteBadgeDialog extends StatelessWidget {
                       onPressed: () {
                         Navigator.of(context).pop(false);
                       },
-                      child: Text(l10n.cancel,
-                          style: const TextStyle(color: colorError))),
+                      child: Text(l10n.cancel)),
                   TextButton(
                       onPressed: () {
                         Navigator.of(context).pop(true);
                       },
-                      child: Text(l10n.ok,
-                          style: const TextStyle(color: colorError))),
+                      child: Text(l10n.ok)),
                 ],
               ),
             ],

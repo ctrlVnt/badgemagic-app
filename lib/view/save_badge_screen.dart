@@ -273,7 +273,7 @@ class _SaveBadgeScreenState extends State<SaveBadgeScreen> {
                           child: Container(
                             width: 300.w,
                             padding: EdgeInsets.symmetric(horizontal: 16.w),
-                            child: TextButton(
+                            child: ElevatedButton(
                               onPressed: selectionProvider
                                       .selectedBadges.isNotEmpty
                                   ? () async {
@@ -313,20 +313,8 @@ class _SaveBadgeScreenState extends State<SaveBadgeScreen> {
                                           context);
                                     }
                                   : null,
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: colorPrimary,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(5.r),
-                                ),
-                                padding: EdgeInsets.symmetric(vertical: 12.h),
-                              ),
                               child: Text(
                                 l10n.transferButton,
-                                style: const TextStyle(
-                                  color: colorOnPrimary,
-                                  fontSize: 16.0,
-                                  fontWeight: FontWeight.w500,
-                                ),
                               ),
                             ),
                           ),

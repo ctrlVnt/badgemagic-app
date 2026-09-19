@@ -26,10 +26,6 @@ class BleProgressDialog extends StatelessWidget {
     return PopScope(
         canPop: false,
         child: AlertDialog(
-            backgroundColor: colorSurface,
-            surfaceTintColor: colorTransparent,
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16.r)),
             contentPadding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 8.h),
             actionsPadding: EdgeInsets.only(bottom: 8.h),
             content: SizedBox(
@@ -69,11 +65,6 @@ class BleProgressDialog extends StatelessWidget {
             actions: [
               if (isFinished)
                 TextButton(
-                  style: TextButton.styleFrom(
-                    foregroundColor: colorOnSurface,
-                    textStyle:
-                        TextStyle(fontSize: 14.sp, fontWeight: FontWeight.bold),
-                  ),
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
@@ -81,11 +72,6 @@ class BleProgressDialog extends StatelessWidget {
                 ),
               if (!isFinished)
                 TextButton(
-                  style: TextButton.styleFrom(
-                    foregroundColor: colorOnSurface,
-                    textStyle:
-                        TextStyle(fontSize: 14.sp, fontWeight: FontWeight.bold),
-                  ),
                   onPressed: () {
                     ConnectState.stopAllBleOperations();
                     Navigator.of(context).pop();

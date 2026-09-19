@@ -124,9 +124,6 @@ class _RenameBadgeDialogState extends State<RenameBadgeDialog> {
   Widget build(BuildContext context) {
     final l10n = GetIt.instance.get<LocalizationService>().l10n;
     return Dialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(5.r),
-      ),
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
         width: 300.w,
@@ -146,7 +143,6 @@ class _RenameBadgeDialogState extends State<RenameBadgeDialog> {
               l10n.newName,
               style: TextStyle(
                 fontWeight: FontWeight.w400,
-                color: colorPrimary,
                 fontSize: 13.sp,
               ),
             ),
@@ -160,21 +156,14 @@ class _RenameBadgeDialogState extends State<RenameBadgeDialog> {
                   setState(() => _errorText = null);
                 }
               },
-              decoration: InputDecoration(
-                enabledBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: colorPrimary),
-                ),
-                focusedBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: colorPrimary, width: 2),
-                ),
-              ),
+              decoration: const InputDecoration(),
             ),
             if (_errorText != null) ...[
               SizedBox(height: 4.h),
               Text(
                 _errorText!,
                 style: TextStyle(
-                  color: Colors.red,
+                  color: colorError,
                   fontSize: 12.sp,
                 ),
               ),
@@ -186,10 +175,7 @@ class _RenameBadgeDialogState extends State<RenameBadgeDialog> {
                 TextButton(
                   onPressed:
                       _isLoading ? null : () => Navigator.of(context).pop(),
-                  child: Text(
-                    l10n.cancel,
-                    style: TextStyle(color: colorPrimary),
-                  ),
+                  child: Text(l10n.cancel),
                 ),
                 TextButton(
                   onPressed: _isLoading ? null : _onRename,
@@ -197,15 +183,11 @@ class _RenameBadgeDialogState extends State<RenameBadgeDialog> {
                       ? SizedBox(
                           width: 16.w,
                           height: 16.h,
-                          child: CircularProgressIndicator(
+                          child: const CircularProgressIndicator(
                             strokeWidth: 2,
-                            color: colorPrimary,
                           ),
                         )
-                      : Text(
-                          l10n.rename,
-                          style: TextStyle(color: colorPrimary),
-                        ),
+                      : Text(l10n.rename),
                 ),
               ],
             ),

@@ -337,7 +337,6 @@ class SettingsScreenState extends State<SettingsScreen> {
                         "Allows sending badge data via OTG USB cable in addition to Bluetooth.",
                         style: TextStyle(fontSize: 12),
                       ),
-                      activeColor: colorAccent,
                       value: _isUsbTransferEnabled,
                       onChanged: (bool value) {
                         setState(() {

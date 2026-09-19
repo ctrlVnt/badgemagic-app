@@ -97,13 +97,6 @@ class BadgeTextInputField extends StatelessWidget {
                   .copyWith(fontSize: 14)
               : const TextStyle(fontSize: 14),
           decoration: InputDecoration(
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10.r),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10.r),
-              borderSide: BorderSide(color: colorPrimary),
-            ),
             contentPadding: EdgeInsets.symmetric(
               horizontal: 12.w,
               vertical: 12.h,

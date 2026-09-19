@@ -34,18 +34,10 @@ Future<String?> showSaveClipartNameDialog(BuildContext context) {
         ),
         actions: [
           TextButton(
-            style: TextButton.styleFrom(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              minimumSize: Size.zero,
-            ),
             child: Text(l10n.cancel),
             onPressed: () => Navigator.of(context).pop(),
           ),
           TextButton(
-            style: TextButton.styleFrom(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              minimumSize: Size.zero,
-            ),
             child: Text(l10n.save),
             onPressed: () {
               Navigator.of(context).pop(controller.text.trim());

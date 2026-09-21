@@ -90,6 +90,9 @@ class _HomeScreenState extends State<HomeScreen>
 
   Timer? _debounceTimer;
 
+  static const _brightnessKey = 'badge_brightness';
+  int _brightnessLevel = 0;
+
   @override
   void initState() {
     super.initState();
@@ -165,6 +168,10 @@ class _HomeScreenState extends State<HomeScreen>
     final speed = prefs.getInt(_speedKey);
     final transition = prefs.getInt(_transitionKey);
     final effects = prefs.getStringList(_effectsKey);
+    final brightness = prefs.getInt(_brightnessKey);
+    if (brightness != null) {
+      _brightnessLevel = brightness.clamp(0, 3);
+    }
     if (text != null) {
       inlineImageController.text = text;
     }
@@ -584,6 +591,7 @@ class _HomeScreenState extends State<HomeScreen>
                         clipartPicker,
                         tabBar,
                         Expanded(child: dialTabView),
+                        _buildBrightnessSlider(),
                         buttonBar,
                       ],
                     );
@@ -608,6 +616,7 @@ class _HomeScreenState extends State<HomeScreen>
                                     .clamp(240.0, 380.0),
                                 child: dialTabView,
                               ),
+                              _buildBrightnessSlider(),
                             ],
                           ),
                         ),
@@ -713,6 +722,7 @@ class _HomeScreenState extends State<HomeScreen>
         marquee: animationProvider.isEffectActive(MarqueeEffect()),
         invert: animationProvider.isEffectActive(InvertLEDEffect()),
         context: context,
+        brightness: _brightnessLevel,
       );
     } catch (error) {
       bleDialogController.update(
@@ -747,6 +757,7 @@ class _HomeScreenState extends State<HomeScreen>
         invert: animationProvider.isEffectActive(InvertLEDEffect()),
         speed: speedDialProvider.getOuterValue(),
         badgeData: badgeData,
+        brightness: _brightnessLevel,
       );
       if (generatedData == null || generatedData.isEmpty) {
         ToastUtils().showErrorToast("Please enter a message to transfer.");
@@ -957,6 +968,57 @@ class _HomeScreenState extends State<HomeScreen>
 
       setState(() {});
     }
+  }
+
+  Widget _buildBrightnessSlider() {
+    final labels = ['100%', '75%', '50%', '25%'];
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 4.h),
+      child: Row(
+        children: [
+          Icon(Icons.brightness_medium_rounded,
+              size: 20.sp, color: colorTextStrong),
+          SizedBox(width: 8.w),
+          Expanded(
+            child: SliderTheme(
+              data: SliderTheme.of(context).copyWith(
+                activeTrackColor: colorPrimary,
+                inactiveTrackColor: colorSurfaceMuted,
+                thumbColor: colorPrimary,
+                overlayColor: colorPrimary.withValues(alpha: 0.2),
+                trackHeight: 4.h,
+              ),
+              child: Slider(
+                value: (3 - _brightnessLevel)
+                    .toDouble(), // Inverte la scala visiva: DX = 100%, SX = 25%
+                min: 0,
+                max: 3,
+                divisions: 3,
+                label: labels[_brightnessLevel],
+                onChanged: (val) {
+                  setState(() {
+                    _brightnessLevel = 3 - val.round();
+                  });
+                  _debouncedSavePreferences();
+                },
+              ),
+            ),
+          ),
+          SizedBox(
+            width: 44.w,
+            child: Text(
+              labels[_brightnessLevel],
+              textAlign: TextAlign.end,
+              style: TextStyle(
+                fontSize: 12.sp,
+                fontWeight: FontWeight.bold,
+                color: colorTextStrong,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   @override

@@ -293,6 +293,7 @@ class AnimationBadgeProvider extends ChangeNotifier {
     required bool marquee,
     required bool invert,
     required BuildContext context,
+    int brightness = 0,
   }) async {
     final int selectedSpeed = speedDialProvider.getOuterValue();
     Future<void> sink(DataTransferManager manager) =>
@@ -344,6 +345,7 @@ class AnimationBadgeProvider extends ChangeNotifier {
         null,
         false,
         context,
+        brightness: brightness,
       );
     }
   }
@@ -355,6 +357,7 @@ class AnimationBadgeProvider extends ChangeNotifier {
     required bool invert,
     required int speed,
     required BadgeMessageProvider badgeData,
+    int brightness = 0,
   }) async {
     if (text.trim().isEmpty) return null;
 
@@ -369,6 +372,7 @@ class AnimationBadgeProvider extends ChangeNotifier {
             ? Mode.left
             : modeValueMap[getAnimationIndex() ?? 0],
         null,
+        brightness: brightness,
       );
 
       final transferManager = DataTransferManager(dataObj);
@@ -394,8 +398,9 @@ class AnimationBadgeProvider extends ChangeNotifier {
 
   Future<List<int>?> generateAnimationUsbPayload(
     BadgeMessageProvider badgeData,
-    int speedLevel,
-  ) async {
+    int speedLevel, {
+    int brightness = 0,
+  }) async {
     List<int>? payload;
     Future<void> capture(DataTransferManager manager) async {
       final chunks = await manager.generateDataChunk();

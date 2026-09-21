@@ -8,6 +8,7 @@ class Message {
   final Speed speed;
   final Mode mode;
   final int? animationIndex;
+  final int brightness;
 
   Message({
     required this.text,
@@ -16,6 +17,7 @@ class Message {
     this.speed = Speed.one,
     this.mode = Mode.left,
     this.animationIndex,
+    this.brightness = 0,
   });
 
   Map<String, dynamic> toJson() => {
@@ -24,6 +26,7 @@ class Message {
         'marquee': marquee,
         'speed': speed.hexValue,
         'mode': mode.hexValue,
+        'brightness': brightness,
         if (animationIndex != null) 'animationIndex': animationIndex,
       };
 
@@ -56,6 +59,7 @@ class Message {
       speed: Speed.fromHex(json['speed'] as String),
       mode: Mode.fromHex(json['mode'] as String),
       animationIndex: json['animationIndex'] as int?,
+      brightness: (json['brightness'] as int?) ?? 0,
     );
   }
 }

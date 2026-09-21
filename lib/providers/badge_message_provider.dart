@@ -58,8 +58,15 @@ class BadgeMessageProvider {
   FileHelper fileHelper = FileHelper();
   Converters converters = Converters();
 
-  Future<Data> getBadgeData(String text, bool flash, bool marq, Speed speed,
-      Mode mode, bool isInverted) async {
+  Future<Data> getBadgeData(
+    String text,
+    bool flash,
+    bool marq,
+    Speed speed,
+    Mode mode,
+    bool isInverted, {
+    int brightness = 0,
+  }) async {
     List<String> message = await converters.messageTohex(text, isInverted);
     Data data = Data(messages: [
       Message(
@@ -68,24 +75,34 @@ class BadgeMessageProvider {
         marquee: marq,
         speed: speed,
         mode: mode,
+        brightness: brightness,
       )
     ]);
     return data;
   }
 
   Future<Data> generateData(
-      String? text,
-      bool? flash,
-      bool? marq,
-      bool? inverted,
-      Speed? speed,
-      Mode? mode,
-      Map<String, dynamic>? jsonData) async {
+    String? text,
+    bool? flash,
+    bool? marq,
+    bool? inverted,
+    Speed? speed,
+    Mode? mode,
+    Map<String, dynamic>? jsonData, {
+    int brightness = 0,
+  }) async {
     if (jsonData != null) {
       return fileHelper.jsonToData(jsonData);
     } else {
-      return getBadgeData(text ?? '', flash ?? false, marq ?? false,
-          speed ?? Speed.one, mode ?? Mode.left, inverted ?? false);
+      return getBadgeData(
+        text ?? '',
+        flash ?? false,
+        marq ?? false,
+        speed ?? Speed.one,
+        mode ?? Mode.left,
+        inverted ?? false,
+        brightness: brightness,
+      );
     }
   }
 
@@ -111,16 +128,18 @@ class BadgeMessageProvider {
   }
 
   Future<void> checkAndTransfer(
-      String? text,
-      bool? flash,
-      bool? marq,
-      bool? isInverted,
-      int? speed,
-      Mode? mode,
-      Map<String, dynamic>? jsonData,
-      bool isSavedBadge,
-      BuildContext context,
-      {TextStyle? textStyle}) async {
+    String? text,
+    bool? flash,
+    bool? marq,
+    bool? isInverted,
+    int? speed,
+    Mode? mode,
+    Map<String, dynamic>? jsonData,
+    bool isSavedBadge,
+    BuildContext context, {
+    TextStyle? textStyle,
+    int brightness = 0,
+  }) async {
     final l10n = GetIt.instance.get<LocalizationService>().l10n;
     final bleDialogController = GetIt.instance<BleDialogController>();
 
@@ -177,7 +196,15 @@ class BadgeMessageProvider {
       data = fileHelper.jsonToData(jsonData);
     } else {
       data = await generateData(
-          text, flash, marq, isInverted, speedMap[speed], mode, jsonData);
+        text,
+        flash,
+        marq,
+        isInverted,
+        speedMap[speed],
+        mode,
+        jsonData,
+        brightness: brightness,
+      );
     }
 
     DataTransferManager manager = DataTransferManager(data);

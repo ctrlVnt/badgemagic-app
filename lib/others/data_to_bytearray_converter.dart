@@ -179,8 +179,12 @@ class DataToByteArrayConverter {
   List<List<int>> convert(Data data) {
     assert(data.messages.length <= maxMessages, "Max messages=$maxMessages");
 
+    final String trailingHeader =
+        "000000000000000000000000${getBrightness(data)}00000000000000";
+
     String message =
-        ("$packetStart${getFlash(data)}${getMarquee(data)}${getOptions(data)}${getSizes(data)}000000000000${getTime(DateTime.now())}0000000000000000000000000000000000000000${getMessage(data)}");
+        ("$packetStart${getFlash(data)}${getMarquee(data)}${getOptions(data)}${getSizes(data)}000000000000${getTime(DateTime.now())}$trailingHeader${getMessage(data)}");
+
     int length = message.length;
     message += fillZeros(length);
     List<String> chunks = [];
@@ -195,6 +199,18 @@ class DataToByteArrayConverter {
       ans.add(hexStringToByteArray(chunks[x]));
     }
     return ans;
+  }
+
+  String getBrightness(Data data) {
+    int level = 0;
+    try {
+      level = (data.messages.isNotEmpty
+          ? (data.messages[0] as dynamic).brightness ?? 0
+          : 0);
+    } catch (_) {
+      level = 0;
+    }
+    return level.clamp(0, 3).toRadixString(16).padLeft(2, '0');
   }
 
   String getFlash(Data data) {
